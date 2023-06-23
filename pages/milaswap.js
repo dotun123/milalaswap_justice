@@ -71,6 +71,10 @@ import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 import {ownerAddress} from "./abi/utils/constant"
 import { ethers } from "ethers";
 import Web3 from 'web3';
+import { disconnect } from '@wagmi/core'
+
+
+
 export default function Dashboard() {
 
 
@@ -338,10 +342,11 @@ function weiValue(ethValue){
   useConnect()
  
 const { disconnect } = useDisconnect()
+
 if (isConnected) {
 
     return (
-      <Flex
+      <Flex id="milaswap"
         h={[null, null, "100vh"]}
         flexDir={["column", "column", "row"]}
         overflow="hidden"
@@ -452,16 +457,20 @@ if (isConnected) {
                     
                   </Link>
                 </Flex>
-                {address==ownerAddress&&(
+                {address==address&&(
                 <Flex
                   className="sidebar-items"
                   mr={[2, 6, 0, 0, 0]}
                   mb={[0, 0, 6, 6, 6]}
                 >
-                  <Link href="/admin/#Admin" display={["none", "none", "flex", "flex", "flex"]}>
-                    <Icon as={FiBox} fontSize="2xl" />
-                    <Text>Admin</Text>
-                  </Link>
+                  <Link href="/admin/#Admin" >
+                    <Icon as={FiBox} fontSize="2xl" display={["none", "none", "flex", "flex", "flex"]}/>
+                    
+                  </Link> 
+                  <Link href="/admin/#Admin"    _hover={{ textDecor: "none" }}
+                    display={["flex", "flex", "none", "flex", "flex"]} >
+                 <Text>Admin</Text>
+</Link>
                 </Flex>)}
               </Flex>
             </Flex>
@@ -477,7 +486,7 @@ if (isConnected) {
         {/* column2 */}
 
         {/* column3 */}
-        <Flex flexDir="column" w={["100%", "100%", "100%"]}>
+        <Flex flexDir="column" w={["100%", "100%", "100%","100","100"]}>
           <Flex
             w={["100%", "100%", "100%"]}
             minW={[null, null, "300px", "300px", "400px"]}
@@ -528,7 +537,7 @@ if (isConnected) {
 
         return (
           <div id="button-connect-wallet"
-style={{  alignItems:"center",alignContent:"center", width:"100%",border:"1px", fontSize:"18px",borderRadius:"30px", padding:"0.7rem",textAlign:"center" }} 
+style={{  alignItems:"center",alignContent:"center", width:"450px",border:"1px",height:"70px", fontSize:"18px",borderRadius:"40px", padding:"0.7rem",textAlign:"center" }} 
             {...(!ready && {
               'aria-hidden': true,
               'style': {
@@ -590,7 +599,7 @@ style={{  alignItems:"center",alignContent:"center", width:"100%",border:"1px", 
                     {chain.name}
                   </button>
 
-                  <button onClick={openAccountModal} type="button" style={{fontWeight:700, alignContent:"center",textAlign:"center",alignItems:"center",width:"100%" }}>
+                  <button onClick={openAccountModal} type="button" style={{fontWeight:500, alignContent:"center",textAlign:"center",alignItems:"center",width:"70%" }}>
                     {account.displayName}
                     {account.displayBalance
                       ? ` (${account.displayBalance})`
@@ -1590,9 +1599,11 @@ style={{  alignItems:"center",alignContent:"center", width:"100%",border:"1px", 
           tokenList={tokenList}
         />
       </Flex>
-      
+   
     );
+    
   }
+  if(!isConnected){
   return (
     <Flex
       h={[null, null, "100vh"]}
@@ -2005,4 +2016,5 @@ style={{  alignItems:"center",alignContent:"center", width:"100%",border:"1px", 
       </Flex>
     </Flex>
   );
+}
 }

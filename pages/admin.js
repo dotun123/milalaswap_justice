@@ -32,6 +32,20 @@ import {
     SkeletonText,
     Alert,
   } from "@chakra-ui/react";
+  import {
+    FiHome,
+    FiPieChart,
+    FiDollarSign,
+    FiBox,
+    FiCalendar,
+    FiChevronDown,
+    FiChevronUp,
+    FiPlus,
+    FiCreditCard,
+    FiSearch,
+    FiBell,
+    FiDroplet,
+  } from "react-icons/fi";
   import React, { useEffect, useMemo, useState, useRef } from "react";
   import {
     useAccount,
@@ -40,7 +54,7 @@ import {
     useEnsAvatar,
     useEnsName,
   } from 'wagmi'
-
+  import { ConnectButton } from '@rainbow-me/rainbowkit';
   import { contractABI,contractAddress } from "./abi/utils/constant";
   import { contractABI2,contractAddress2 } from "./abi/utils/constant";
   import { contractABI3,contractAddress3 } from "./abi/utils/constant";
@@ -193,11 +207,229 @@ import {
 
 
 return(
+<Flex h={[null, null, "100vh"]}
+ flexDir={["column", "column", "row"]}
+        overflow="hidden"
+        maxW="3000px"
+>
+      <Flex w={["100%", "100%", "10%", "15%", "15%"]}
+          flexDir="column"
+          alignItems="center"
+          backgroundColor="#001013"
+          color="#B495B1">
+      <Flex
+          
+        ></Flex>
+        <Heading
+          mt={50}
+          mb={[25, 50, 100]}
+          fontSize={["4xl", "4xl", "2xl", "3xl", "4xl"]}
+          alignSelf="center"
+          letterSpacing="tight"
+        >
+          Mila.
+        </Heading>
+        <Flex
+          flexDir={["row", "row", "column", "column", "column"]}
+          align={["center", "center", "center", "flex-start", "flex-start"]}
+          justifyContent="center"
+          mb={[0, 0, 6, 6, 6]}
+        >
+          <Flex
+            className="sidebar-items"
+            mr={[2, 6, 0, 0, 0]}
+            mb={[0, 0, 6, 6, 6]}
+          >
+            <Link display={["none", "none", "flex", "flex", "flex"]}>
+              <Icon as={FiHome} fontSize="2xl" />
+            </Link>
+            <Link
+              _hover={{ textDecor: "none" }}
+              display={["flex", "flex", "none", "flex", "flex"]}
+            >
+              <Text>Home</Text>
+            </Link>
+          </Flex>
+          <Flex
+            className="sidebar-items"
+            mr={[2, 6, 0, 0, 0]}
+            mb={[0, 0, 6, 6, 6]}
+          >
+            <Link display={["none", "none", "flex", "flex", "flex"]}>
+              <Icon as={FiDroplet} fontSize="2xl" className="active-icon" />
+            </Link>
+            <Link href="/milaswap/#milaswap"
+              _hover={{ textDecor: "none" }}
+              display={["flex", "flex", "none", "flex", "flex"]}
+            >
+              <Text className="active">Dashboard</Text>
+            </Link>
+          </Flex>
+          <Flex
+            className="sidebar-items"
+            mr={[2, 6, 0, 0, 0]}
+            mb={[0, 0, 6, 6, 6]}
+          >
+            <Link display={["none", "none", "flex", "flex", "flex"]}>
+              <Icon as={FiPieChart} fontSize="2xl" />
+            </Link>
+            <Link
+              _hover={{ textDecor: "none" }}
+              display={["flex", "flex", "none", "flex", "flex"]}
+            >
+              <Text>Wallet</Text>
+            </Link>
+          </Flex>
+          <Flex
+            className="sidebar-items"
+            mr={[2, 6, 0, 0, 0]}
+            mb={[0, 0, 6, 6, 6]}
+          >
+            <Link display={["none", "none", "flex", "flex", "flex"]}>
+              <Icon as={FiBox} fontSize="2xl" />
+            </Link>
+            <Link
+              _hover={{ textDecor: "none" }}
+              display={["flex", "flex", "none", "flex", "flex"]}
+            >
+              <Text>Services</Text>
+            </Link>
+          </Flex>
+          <Flex
+                  className="sidebar-items"
+                  mr={[2, 6, 0, 0, 0]}
+                  mb={[0, 0, 6, 6, 6]}
+                >
+                   <Link href="/admin/#Admin" >
+                    <Icon as={FiBox} fontSize="2xl" display={["none", "none", "flex", "flex", "flex"]}/>
+                    
+                  </Link> 
+                  <Link href="/admin/#Admin"    _hover={{ textDecor: "none" }}
+                    display={["flex", "flex", "none", "flex", "flex"]} >
+                 <Text>Admin</Text>
+</Link>
+                </Flex>
+        </Flex>
+        <Flex flexDir="column" alignItems="center" mb={10} mt={5}>
+        <Avatar my={2} src="avatar-1.jpg" />
+        <Text textAlign="center">Ola Silva A.</Text>
+ </Flex>
+      </Flex>
+ <Flex alignContent="center"     w={["100%", "100%", "50%"]}
+        minW={[null, null, "300px", "300px", "400px"]}
+       ml={["0","0","15%"]}
+        p="3%"
+        flexDir="column"
+        overflow="auto" >
+      <ConnectButton.Custom>
+      {({
+        account,
+        chain,
+        openAccountModal,
+        openChainModal,
+        openConnectModal,
+        authenticationStatus,
+        mounted,
+      }) => {
+        // Note: If your app doesn't use authentication, you
+        // can remove all 'authenticationStatus' checks
+        const ready = mounted && authenticationStatus !== 'loading';
+        const connected =
+          ready &&
+          account &&
+          chain &&
+          (!authenticationStatus ||
+            authenticationStatus === 'authenticated');
 
-  <Flex  id="Admin" flexDir={["column", "column", "row"]}
-  justifyContent={"center"}  overflow="hidden"
+        return (
+          <div id="button-connect-wallet"
+style={{  alignItems:"center",alignContent:"center", width:"100%",border:"1px", fontSize:"18px",borderRadius:"30px", padding:"0.7rem",textAlign:"center" }} 
+            {...(!ready && {
+              'aria-hidden': true,
+              'style': {
+                opacity: 0,
+                pointerEvents: 'none',
+                userSelect: 'none',
+                display: 'flex', alignItems: 'center'
+                            
+              },
+            })}
+          >
+          { (() => {
+              
+            if (!connected) {
+                return (
+                  <button onClick={openConnectModal} type="button" style={{fontWeight:700, alignContent:"center",textAlign:"center",alignItems:"center",width:"100%" }} >
+                    Connect Wallet
+                  </button>
+                );
+              }
+
+              if (chain.unsupported) {
+               
+                return (
+                  <button onClick={openChainModal} type="button" style={{fontWeight:700, alignContent:"center",textAlign:"center",alignItems:"center",width:"100%" }}>
+                    Wrong network
+                  </button>
+                
+                );
+              }
+
+              return (
+                <div style={{ display: 'flex', gap: 12 }}>
+                  <button
+                    onClick={openChainModal}
+                    style={{ display: 'flex', alignItems: 'center' }}
+                    type="button"
+                  >
+                    {chain.hasIcon && (
+                      <div
+                        style={{
+                          background: chain.iconBackground,
+                          width: 12,
+                          height: 12,
+                          borderRadius: 999,
+                          overflow: 'hidden',
+                          marginRight: 4,
+                        }}
+                      >
+                        {chain.iconUrl && (
+                          <img
+                            alt={chain.name ?? 'Chain icon'}
+                            src={chain.iconUrl}
+                            style={{ width: 12, height: 12 }}
+                          />
+                        )}
+                      </div>
+                    )}
+                    {chain.name}
+                  </button>
+
+                  <button onClick={openAccountModal} type="button" style={{fontWeight:700, alignContent:"center",textAlign:"center",alignItems:"center",width:"50%" }}>
+                    {account.displayName}
+                    {account.displayBalance
+                      ? ` (${account.displayBalance})`
+                      : ''}
+                  </button>
+                </div>
+              );
+            })()}
+          </div>
+        );
+      }}
+    </ConnectButton.Custom> 
+   
+ 
+   <Flex  id="Admin" flexDir={["column", "column","row","row", "row"]}
+  justifyContent={"center"}  overflow="hidden" mt={["30px","30px","20%"]}
      ml={["40px","40px","0"]}
-  w={["80%","80%","100%"]} >
+  w={["80%","80%","100%","100%","100%"]} >
+
+
+
+  
+                
+
     <Box
     bg="#ffffff"
     p={4}
@@ -294,6 +526,7 @@ return(
     bg="#ffffff"
     p={4}
     mt={8}
+    ml={[0,0,"22px"]}
     borderRadius="20px"
     border="0px"
     borderColor="#dc35464b"
@@ -379,10 +612,12 @@ return(
          MINT
         </Button>
       </Flex>
-    </Flex>
-    <Flex></Flex>
-  </Box>
-  </Flex>
-  
+    </Flex> 
+    
+   </Box> 
+   </Flex> 
+  </Flex> 
+  </Flex> 
+ 
 )
   };
