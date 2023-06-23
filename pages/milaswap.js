@@ -457,7 +457,7 @@ if (isConnected) {
                     
                   </Link>
                 </Flex>
-                {address==address&&(
+                {address==ownerAddress&&(
                 <Flex
                   className="sidebar-items"
                   mr={[2, 6, 0, 0, 0]}
