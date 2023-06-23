@@ -316,7 +316,7 @@ const { data:buyData,  isSuccess:buySuccess, write:writeBuy } = useContractWrite
 };
 
 
-// console.log(ethValue(10000));
+
 
 
 
