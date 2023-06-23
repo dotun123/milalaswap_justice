@@ -10,7 +10,7 @@ import {
 } from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { mainnet, polygon, optimism, arbitrum,sepolia, polygonMumbai} from 'wagmi/chains';
-// import { infuraProvider } from 'wagmi/providers/infura'
+
 import { publicProvider } from 'wagmi/providers/public';
 
 
@@ -18,7 +18,7 @@ const { chains, publicClient,  } = configureChains(
   [mainnet, polygon, optimism, arbitrum,sepolia,polygonMumbai],
   [
    
-    // infuraProvider({ apiKey: '3ea3444f246546c4968439038871a0c7' }) ,
+    
     
     publicProvider()
   ]

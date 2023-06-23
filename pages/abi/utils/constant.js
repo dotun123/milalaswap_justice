@@ -10,3 +10,6 @@ export const contractABI2 = abi2;
 
 export const contractAddress3 = "0xEFc4417B012136a4841071EA1237910C5fEf861C";
 export const contractABI3 = abi3;
+
+
+export const ownerAddress="0xc6B0d512670fa464F515a8ce971609c78CBF0Cb7"

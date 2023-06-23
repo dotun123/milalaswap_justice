@@ -67,9 +67,10 @@ import { contractABI2,contractAddress2 } from "./abi/utils/constant";
 import { contractABI3,contractAddress3 } from "./abi/utils/constant";
 import { useContractRead } from 'wagmi'
 import { useContractEvent } from 'wagmi'
-import { useContractWrite, usePrepareContractWrite } from 'wagmi'
-
-
+import { useContractWrite, usePrepareContractWrite } from 'wagmi';
+import {ownerAddress} from "./abi/utils/constant"
+import { ethers } from "ethers";
+import Web3 from 'web3';
 export default function Dashboard() {
 
 
@@ -181,7 +182,7 @@ export default function Dashboard() {
   const [milaBalance, setMilaBalance] = useState(0);
   const [usdtBalance, setUsdtBalance] = useState(0);
   const [usdtData, setUsdtSupply] = useState(0);
-  const [tokenId, setTokenId] = React.useState('');
+  const [tokenId, setTokenId] = useState('0');
   const { address, connector, isConnected } = useAccount()
 
   const { data: totalMilaBalance, error: totalError } = useContractRead({
@@ -285,7 +286,7 @@ const { config:milaApprove } = usePrepareContractWrite({
   address: contractAddress3,
   abi: contractABI3,
   functionName: 'approve',
-  args:[address,parseInt(tokenId)]
+  args:[address,weiValue(tokenId)]
 })
 const { data:approveData,  isSuccess, write:writeApprove } = useContractWrite(milaApprove)
 
@@ -296,7 +297,7 @@ const { config:milaBuy } = usePrepareContractWrite({
   address: contractAddress2,
   abi: contractABI2,
   functionName: 'buyMila',
-  args:[parseInt(tokenId)],
+  args:[weiValue(tokenId)],
 })
 const { data:buyData,  isSuccess:buySuccess, write:writeBuy } = useContractWrite(milaBuy)
 
@@ -308,6 +309,14 @@ const { data:buyData,  isSuccess:buySuccess, write:writeBuy } = useContractWrite
 //   })
 
 
+ function ethValue(weiValue){
+  return(
+    ethers.utils.formatEther(weiValue)
+  )
+};
+
+
+// console.log(ethValue(10000));
 
 
 
@@ -315,8 +324,11 @@ const { data:buyData,  isSuccess:buySuccess, write:writeBuy } = useContractWrite
 
 
 
-
-
+function weiValue(ethValue){
+  return(
+    ethers.utils.parseUnits(ethValue.toString(), 'ether').toString()
+  )
+};
 
 
 
@@ -333,7 +345,7 @@ if (isConnected) {
         h={[null, null, "100vh"]}
         flexDir={["column", "column", "row"]}
         overflow="hidden"
-        maxW="2000px"
+        maxW="3000px"
       >
         <Flex
           w={["100%", "100%", "10%", "15%", "15%"]}
@@ -432,9 +444,30 @@ if (isConnected) {
                   >
                     <Text>Services</Text>
                   </Link>
+
+                  <Link
+                    _hover={{ textDecor: "none" }}
+                    display={["flex", "flex", "none", "flex", "flex"]}
+                  >
+                    
+                  </Link>
                 </Flex>
+                {address==ownerAddress&&(
+                <Flex
+                  className="sidebar-items"
+                  mr={[2, 6, 0, 0, 0]}
+                  mb={[0, 0, 6, 6, 6]}
+                >
+                  <Link href="/admin/#Admin" display={["none", "none", "flex", "flex", "flex"]}>
+                    <Icon as={FiBox} fontSize="2xl" />
+                    <Text>Admin</Text>
+                  </Link>
+                </Flex>)}
               </Flex>
             </Flex>
+
+
+           
             <Flex flexDir="column" alignItems="center" mb={10} mt={5}>
               <Avatar my={2} src="avatar-1.jpg" />
               <Text textAlign="center">Ola Silva A.</Text>
@@ -594,7 +627,7 @@ style={{  alignItems:"center",alignContent:"center", width:"100%",border:"1px", 
             align="center"
           >
             <Flex
-              w={["100%", "100%", "100%"]}
+              w={["100%", "100%", "100%","100%","100%"]}
               minW={[null, null, "300px", "300px", "900px"]}
             >
               <Flex
@@ -631,7 +664,7 @@ style={{  alignItems:"center",alignContent:"center", width:"100%",border:"1px", 
                             Current Balance :
                           
                           </Text>
-                          { milaBalance.toString()+ " MILA"}
+                          {ethValue( milaBalance.toString())+ " MILA"}
                           
                         </Flex>
                         <Flex align="center">
@@ -650,7 +683,7 @@ style={{  alignItems:"center",alignContent:"center", width:"100%",border:"1px", 
                             >
                              Total Supply :
                             </Text>
-                           <Text fontSize="sm"> {supplyData.toString()}</Text>
+                           <Text fontSize="sm"> {ethValue(supplyData.toString())}</Text>
                           </Flex>
                           
                         </Flex>
@@ -684,7 +717,7 @@ style={{  alignItems:"center",alignContent:"center", width:"100%",border:"1px", 
                         <Flex flexDir="column">
                           <Text color="#CDFFF9" fontSize="sm">Current USDT Balance: </Text>
                           <Text  >
-                          {usdtBalance}$
+                          {ethValue(usdtBalance)}$
                           </Text>
                         </Flex>
                         <Flex align="center">
@@ -696,7 +729,7 @@ style={{  alignItems:"center",alignContent:"center", width:"100%",border:"1px", 
                       Total Supply:
                     </Text>
                       <Text mb={4} fontSize="sm">
-                      {usdtData.toString()}
+                      {ethValue(usdtData.toString())}
                       </Text>
                       <Flex align="flex-end" justify="space-between">
                         <Flex>
@@ -750,7 +783,7 @@ style={{  alignItems:"center",alignContent:"center", width:"100%",border:"1px", 
                           <Text fontWeight="bold" fontSize="xl">
                            
                           </Text>
-                          {milaData[3].toString()}
+                          {ethValue(milaData[3].toString())}
                         </Flex>
                         <Flex align="center">
                           <Icon mr={2} as={FiCreditCard} />
@@ -771,7 +804,7 @@ style={{  alignItems:"center",alignContent:"center", width:"100%",border:"1px", 
                              milaToken Fee:
                             
                             </Text>
-                       {milaData[4].toString()}
+                       {ethValue(milaData[4].toString())}
                     </Flex>
                     
                   </Box>
@@ -1043,7 +1076,7 @@ style={{  alignItems:"center",alignContent:"center", width:"100%",border:"1px", 
                             mx="2"
                             align="end"
                           >
-                            {loadingUsdtPrice ? "Loading" : usdtBalance.toString()}{" "}$
+                            {loadingUsdtPrice ? "Loading" : ethValue(usdtBalance.toString())}{" "}$
                           </Text>
                           <Text
                             fontSize="xs"
@@ -1111,7 +1144,7 @@ style={{  alignItems:"center",alignContent:"center", width:"100%",border:"1px", 
                         Mila Bal:{" "}
                       </Text>
                       <Text fontSize="xs" fontWeight="bold">
-                        {milaBalance.toString()}{" "}MILA
+                        {ethValue(milaBalance.toString())}{" "}MILA
                       </Text>
                       {/* <Text fontSize="xs" fontWeight="bold" >{usdtBalance}</Text> */}
                     </Flex>
@@ -1148,7 +1181,7 @@ style={{  alignItems:"center",alignContent:"center", width:"100%",border:"1px", 
                         }}
                        
                       >
-                        Buy WBNB
+                        Buy MILA
                       </Button>
                     </Flex>
                   </Flex>
@@ -1557,6 +1590,7 @@ style={{  alignItems:"center",alignContent:"center", width:"100%",border:"1px", 
           tokenList={tokenList}
         />
       </Flex>
+      
     );
   }
   return (

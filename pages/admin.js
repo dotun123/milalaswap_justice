@@ -47,6 +47,32 @@ import {
   import { useContractRead } from 'wagmi'
   import { useContractEvent } from 'wagmi'
   import { useContractWrite, usePrepareContractWrite } from 'wagmi'
+  import {ownerAddress} from "./abi/utils/constant";
+  import { ethers } from "ethers";
+
+
+
+  function ethValue(weiValue){
+    return(
+      ethers.utils.formatEther(weiValue)
+    )
+  };
+
+  
+
+  function weiValue(ethValue){
+    return(
+      ethers.utils.parseUnits(ethValue.toString(), 'ether').toString()
+    )
+  };
+
+
+
+
+  
+  
+
+
 
   export default function Admin(){
 
@@ -63,36 +89,36 @@ import {
 
 
 
-// const [allowValue, setAllowValue] = useState(0);
-  // const [ownerValue, setOwnerValue] = useState(0);
-    // const [milaBalance, setMilaBalance] = useState(0);
-    // const [allowanceBalance,setAllowanceBalance ] = useState(0);
-    // const { address, connector, isConnected } = useAccount()
+ const [allowValue, setAllowValue] = useState("0");
+   const [ownerValue, setOwnerValue] = useState("0");
+    const [milaBalance, setMilaBalance] = useState(0);
+     const [allowanceBalance,setAllowanceBalance ] = useState(0);
+    const { address, connector, isConnected } = useAccount()
+
+    
 
 
-
-
-    // const { data: milaAllowance, error: allowanceError } = useContractRead({
-    //   address:contractAddress,
-    //   abi: contractABI,
-    //   functionName: "allowance",
-    //   args:[ownerAddress,address]
-    //    })
+    const { data: milaAllowance, error: allowanceError } = useContractRead({
+      address:contractAddress,
+      abi: contractABI,
+       functionName: "allowance",
+       args:[ownerAddress,address]
+       })
   
 
 
-        // useEffect(() => {
-    //   if (milaAllowance) {
-    //     let Allow = milaAllowance;
-    //     setAllowanceBalance(Allow);
-    //   }
-    // }, [milaAllowance]);
+        useEffect(() => {
+      if (milaAllowance) {
+       let Allow = milaAllowance;
+       setAllowanceBalance(Allow);
+     }
+     }, [milaAllowance]);
   
     /* console.log data to view variables */
-    //  useEffect(() => {
+     useEffect(() => {
      
-    //    console.log("MilaAllowance:", milaAllowance);
-    //  })
+        console.log("MilaAllowance:", milaAllowance);
+      })
   
 
 
@@ -102,25 +128,25 @@ import {
 
 
 
-    // const { data: ownerBalance, error: ownerBalanceError } = useContractRead({
-    //   address:contractAddress,
-    //   abi: contractABI,
-    //   functionName: "balanceOf",
-        //  args:[ownerAddress],
-    // })
+    const { data: ownerBalance, error: ownerBalanceError } = useContractRead({
+       address:contractAddress,
+       abi: contractABI,
+     functionName: "balanceOf",
+         args:[ownerAddress],
+     })
   
-    // useEffect(() => {
-    //   if (ownerBalance) {
-    //     let own = ownerBalance;
-    //     setOwnerData(own);
-    //   }
-    // }, [ownerBalance]);
+    useEffect(() => {
+      if (ownerBalance) {
+        let own = ownerBalance;
+         setMilaBalance(own);
+      }
+     }, [ownerBalance]);
   
-    // /* console.log data to view variables */
-    // // useEffect(() => {
+     /* console.log data to view variables */
+     useEffect(() => {
      
-    // //   console.log("ownerBalance:", ownerBalance);
-    // // })
+    console.log("ownerBalance:", ownerBalance);
+     })
 
 
 
@@ -128,26 +154,24 @@ import {
 
 
 
-
-
-    // const { config:allowanceIncrease } = usePrepareContractWrite({
-    //   address: contractAddress,
-    //   abi: contractABI,
-    //   functionName: 'increaseAllowance',
-    //   args:[address,parseInt(allowValue)]
-    // })
-    // const { data:allowanceData,  isSuccess, write:writeAllowance } = useContractWrite(allowanceIncrease)
+     const { config:allowanceIncrease } = usePrepareContractWrite({
+       address: contractAddress,
+       abi: contractABI,
+      functionName: 'increaseAllowance',
+       args:[address,weiValue(allowValue)]
+     })
+     const { data:allowanceData,  isSuccess, write:writeAllowance } = useContractWrite(allowanceIncrease)
     
     
     
     
-    // const { config:configMint } = usePrepareContractWrite({
-    //   address: contractAddress,
-    //   abi: contractABI,
-    //   functionName: 'mint',
-    //   args:[address,parseInt(ownerValue)],
-    // })
-    // const { data:mintData,  isSuccess:mintSuccess, write:writeMint } = useContractWrite(configMint)
+    const { config:configMint } = usePrepareContractWrite({
+      address: contractAddress,
+       abi: contractABI,
+       functionName: 'mint',
+     args:[address,weiValue(ownerValue)],
+     })
+    const { data:mintData,  isSuccess:mintSuccess, write:writeMint } = useContractWrite(configMint)
     
     
     
@@ -163,16 +187,17 @@ import {
 
 
 
-
+   
 
 
 
 
 return(
 
-  <Flex  
-  justifyContent={"space-between"}
-  w={"50%,70%"} >
+  <Flex  id="Admin" flexDir={["column", "column", "row"]}
+  justifyContent={"center"}  overflow="hidden"
+     ml={["40px","40px","0"]}
+  w={["80%","80%","100%"]} >
     <Box
     bg="#ffffff"
     p={4}
@@ -201,7 +226,7 @@ return(
             >
               Allowance Bal:
             </Text>
-            {allowanceBalance.tostring()}
+            {ethValue(allowanceBalance.toString())}
            
           </Flex>
        
@@ -220,6 +245,9 @@ return(
         <Input
           placeholder="0.0"
           w="100%"
+          min="1"
+          type="number"
+          
           _hover={{
             border: "0px",
           }}
@@ -243,11 +271,18 @@ return(
           py={5}
           borderRadius="15px"
           bgColor="#dc35464b"
-          // isDisabled={sellButtonDisabled == true}
+      
           mt={5}
-          // onClick={() => swapBnbForUsdt()}
-          // isLoading={approveLoadingSell}
-          // disabled
+          onClick={()=>{
+                          try{
+                            writeAllowance?.();
+                            
+                      
+                          }
+                          catch(err){
+                            console.log(err);
+                          }
+                        }}
         >
           Increase Allowance
         </Button>
@@ -283,7 +318,7 @@ return(
             >
               MILA Bal:
             </Text>
-            {milaBalance.tostring()}
+            {ethValue(milaBalance.toString())}
            
           </Flex>
        
@@ -302,6 +337,9 @@ return(
         <Input
           placeholder="0.0"
           w="100%"
+          min="1"
+          type="number"
+        
           _hover={{
             border: "0px",
           }}
@@ -325,11 +363,18 @@ return(
           py={5}
           borderRadius="15px"
           bgColor="#dc35464b"
-          // isDisabled={sellButtonDisabled == true}
+         
           mt={5}
-          // onClick={() => swapBnbForUsdt()}
-          // isLoading={approveLoadingSell}
-          // disabled
+          onClick={()=>{
+                          try{
+                            writeMint?.();
+                            
+                      
+                          }
+                          catch(err){
+                            console.log(err);
+                          }
+                        }}
         >
          MINT
         </Button>
