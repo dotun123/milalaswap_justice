@@ -17,9 +17,6 @@ import { publicProvider } from 'wagmi/providers/public';
 const { chains, publicClient,  } = configureChains(
   [mainnet, polygon, optimism, arbitrum,sepolia,polygonMumbai],
   [
-   
-    
-    
     publicProvider()
   ]
 );

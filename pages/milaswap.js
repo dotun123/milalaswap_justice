@@ -47,11 +47,11 @@ import {
   FiBell,
   FiDroplet,
 } from "react-icons/fi";
-import MyChart from "../components/Mychart";
-import { Line, Chart } from "react-chartjs-2";
+// import MyChart from "../components/Mychart";
+// import { Line, Chart } from "react-chartjs-2";
 
-import InchModal from "../components/InchModal";
-import useInchDex from "../src/hooks/useInchDex";
+// import InchModal from "../components/InchModal";
+// import useInchDex from "../src/hooks/useInchDex";
 
 import {
   useAccount,
@@ -60,7 +60,7 @@ import {
   useEnsAvatar,
   useEnsName,
 } from 'wagmi'
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+
 
 import { contractABI,contractAddress } from "./abi/utils/constant";
 import { contractABI2,contractAddress2 } from "./abi/utils/constant";
@@ -68,61 +68,19 @@ import { contractABI3,contractAddress3 } from "./abi/utils/constant";
 import { useContractRead } from 'wagmi'
 import { useContractEvent } from 'wagmi'
 import { useContractWrite, usePrepareContractWrite } from 'wagmi';
-import {ownerAddress} from "./abi/utils/constant"
+
 import { ethers } from "ethers";
 import Web3 from 'web3';
 import { disconnect } from '@wagmi/core'
+import { Sidebar } from "../components/global/sidebar";
+import { ConnectButtonComp } from "../components/global/ConnectButton";
 
 
 
 export default function Dashboard() {
-
-
-
-
-
   const [display, changeDisplay] = useState("hide");
   const [value, changeValue] = useState(1);
-
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
- 
-  const [userBalance, setUserBalance] = useState(null);
-
-  const [userChain, setUserChain] = useState(null);
-  const [userChainId, setUserChainId] = useState(null);
-  const [userNetworkName, setUserNetworkName] = useState(null);
-
-  const [data, setData] = useState(null);
-
-  const [busdData, setBusdData] = useState(null);
-  const [dripData, setDripData] = useState(null);
-  const [busdBal, setBusdBal] = useState(null);
-  const [busdWeiBalance, setBusdWeiBalance] = useState(null);
-  const [dripBal, setDripBal] = useState(null);
-  const [busdIsLoading, setBusdLoading] = useState(false);
-  const [dripIsLoading, setDripLoading] = useState(false);
   
-  const [usdtWeiBalance, setUsdtWeiBalance] = useState();
-
-  const { trySwap, tokenList, getQuote, swapComplete } =
-    useInchDex(userChainId);
-  const [isFromModalActive, setFromModalActive] = useState(false);
-  const [isToModalActive, setToModalActive] = useState(false);
-  const [fromToken, setFromToken] = useState();
-  const [toToken, setToToken] = useState();
-
-  const [fromTokenPriceUsd, setFromTokenPriceUsd] = useState();
-  const [fromAmount, setFromAmount] = useState();
-  const [toAmount, setToAmount] = useState();
-  const [sellBnbFromAmount, setSellBnbFromAmount] = useState(0);
-  const [buyBnbFromAmount, setBuyBnbFromAmount] = useState(0);
-  const [sellBnbExpectedAmount, setSellBnbExpectedAmount] = useState(0);
-  const [buyBnbExpectedAmount, setBuyBnbExpectedAmount] = useState(0);
-  const [loadingSB, setLoadingSB] = useState(false);
-  const [sellButtonDisabled, setSellButtonDisabled] = useState(true);
-  const [buyButtonDisabled, setBuyButtonDisabled] = useState(true);
-
   const [sellBnbQuote, setSellBnbQuote] = useState({
     sbToTokenPrice: null,
     sbFromTokenPrice: null,
@@ -135,15 +93,7 @@ export default function Dashboard() {
     quoteGas: null,
   });
 
-  const [chrtState, setChrtState] = useState({
-    loading: true,
-    drip: null,
-  });
-  const [chartData, setChartData] = useState([]);
-   const [chartData2, setChartData2] = useState([]);
-   const [chartData3, setChartData3] = useState([]);
-   const [employeeSalary, setEmployeeSalary] = useState([]);
-   const [employeeAge, setEmployeeAge] = useState([]);
+ 
 
    //I want to hide the dex ui for now
    const [dexTuggle, setDexTuggle] = useState(false);
@@ -160,28 +110,6 @@ export default function Dashboard() {
    let chainId;
    let web3;
 
-   const handleFromAmountChange = (event) => setFromAmount(event.target.value);
-
- const handleSellBnbFromAmountChange = (event) =>
-     setSellBnbFromAmount(event.target.value);
-   const handleBuyBnbFromAmountChange = (event) =>
-    setBuyBnbFromAmount(event.target.value);
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   const [supplyData, setSupplyData] = useState(0);
   const [milaBalance, setMilaBalance] = useState(0);
   const [usdtBalance, setUsdtBalance] = useState(0);
@@ -193,14 +121,12 @@ export default function Dashboard() {
     address:contractAddress,
     abi: contractABI,
     functionName: "balanceOf",
+    args:[address],
      })
 
-  useEffect(() => {
-    if (totalMilaBalance) {
-      let bal = totalMilaBalance;
-      setMilaBalance(bal);
-    }
-  }, [totalMilaBalance]);
+  // useEffect(() => {
+
+  // }, []);
 
   /* console.log data to view variables */
   // useEffect(() => {
@@ -214,74 +140,54 @@ export default function Dashboard() {
     functionName: "totalSupply",
 
   })
-
-  useEffect(() => {
-    if (milaTotalSupply) {
-      let supply = milaTotalSupply;
-      setSupplyData(supply);
-    }
-  }, [milaTotalSupply]);
-
-  /* console.log data to view variables */
-  // useEffect(() => {
-   
-  //   console.log("milaTotalSupply:", milaTotalSupply);
-  // })
-
+  
   const { data: milaData, error: milaDataError } = useContractRead({
     address:contractAddress2,
     abi: contractABI2,
     functionName: "sysVars",
 
   })
-
-
-//  useEffect(() => {
-   
-//     console.log("milaData:", milaData[0]);
-//   })
-
-
-const { data: usdtTotalSupply, error: usdttotalSupplyError } = useContractRead({
+  const { data: usdtTotalSupply, error: usdttotalSupplyError } = useContractRead({
   address:contractAddress3,
   abi: contractABI3,
   functionName: "totalSupply",
- 
+  })
 
-})
+// useEffect(() => {
+
+// }, []);
+
+  const { data: totalUsdtBalance, error: usdtTotalError } = useContractRead({
+    address:contractAddress3,
+    abi: contractABI3,
+    functionName: "balanceOf",
+      args:[address],
+  })
+
 
 useEffect(() => {
-  if (usdtTotalSupply) {
+    if (milaTotalSupply) {
+      let supply = milaTotalSupply;
+      setSupplyData(supply);
+      console.log("milaData:", supply);
+    }
+     if (totalMilaBalance) {
+      let bal = totalMilaBalance;
+      setMilaBalance(bal);
+    }
+      if (usdtTotalSupply) {
     let total = usdtTotalSupply;
     setUsdtSupply(total);
-  }
-}, [usdtTotalSupply]);
-
-/* console.log data to view variables */
-// useEffect(() => {
- 
-//   console.log("usdtTotalSupply:", usdtData.toString());
-// })
-
-const { data: totalUsdtBalance, error: usdtTotalError } = useContractRead({
-  address:contractAddress3,
-  abi: contractABI3,
-  functionName: "balanceOf",
-  
-   })
-
-useEffect(() => {
+  } 
   if (totalUsdtBalance) {
     let bal2 = totalUsdtBalance;
     setUsdtBalance(bal2);
   }
-}, [totalUsdtBalance]);
+  console.log("error: ", usdtTotalError)
+  console.log("usdtBalance: ", totalUsdtBalance)
+    
+  }, [milaTotalSupply, totalMilaBalance, usdtTotalSupply, totalUsdtBalance]);
 
-
-// useEffect(() => {
-   
-//     console.log("totalUsdtBalance:", usdtBalance);
-//   })
 
 
 
@@ -305,45 +211,28 @@ const { config:milaBuy } = usePrepareContractWrite({
 })
 const { data:buyData,  isSuccess:buySuccess, write:writeBuy } = useContractWrite(milaBuy)
 
-
-
-//  useEffect(() => {
-   
-//     console.log("value:", tokenId);
-//   })
-
-
- function ethValue(weiValue){
+function ethValue(weiValue){
   return(
     ethers.utils.formatEther(weiValue)
   )
 };
-
-
-
-
-
-
-
-
-
-
 function weiValue(ethValue){
   return(
     ethers.utils.parseUnits(ethValue.toString(), 'ether').toString()
   )
 };
+const weiToToken = (bigNumber, decimal = 18) => {
+  return ethers.utils.formatUnits(bigNumber.toString(), decimal);
+};
+const tokenToWei = (number, decimal = 18) => {
+  return ethers.utils.parseUnits(number.toString(), decimal);
+};
 
-
-
-
-
-  const{ connect, connectors, error, isLoading, pendingConnector } =
-  useConnect()
+// const{ connect, connectors, error, isLoading, pendingConnector } = useConnect()
  
-const { disconnect } = useDisconnect()
+// const { disconnect } = useDisconnect()
 
-if (isConnected) {
+
 
     return (
       <Flex id="milaswap"
@@ -352,137 +241,12 @@ if (isConnected) {
         overflow="hidden"
         maxW="3000px"
       >
-        <Flex
-          w={["100%", "100%", "10%", "15%", "15%"]}
-          flexDir="column"
-          alignItems="center"
-          backgroundColor="#001013"
-          color="#B495B1"
-        >
-          <Flex
-            flexDir="column"
-            justifyContent="space-between"
-            h={[null, null, "100vh"]}
-          >
-            <Flex flexDir="column" as="nav">
-              <Heading
-                mt={50}
-                mb={[25, 50, 100]}
-                fontSize={["4xl", "4xl", "2xl", "3xl", "4xl"]}
-                alignSelf="center"
-                letterSpacing="tight"
-              >
-                Mila.
-              </Heading>
-              <Flex
-                flexDir={["row", "row", "column", "column", "column"]}
-                align={[
-                  "center",
-                  "center",
-                  "center",
-                  "flex-start",
-                  "flex-start",
-                ]}
-                justifyContent="center"
-                mb={[0, 0, 6, 6, 6]}
-              >
-                <Flex
-                  className="sidebar-items"
-                  mr={[2, 6, 0, 0, 0]}
-                  mb={[0, 0, 6, 6, 6]}
-                >
-                  <Link display={["none", "none", "flex", "flex", "flex"]}>
-                    <Icon as={FiHome} fontSize="2xl" />
-                  </Link>
-                  <Link
-                    _hover={{ textDecor: "none" }}
-                    display={["flex", "flex", "none", "flex", "flex"]}
-                  >
-                    <Text>Home</Text>
-                  </Link>
-                </Flex>
-                <Flex
-                  className="sidebar-items"
-                  mr={[2, 6, 0, 0, 0]}
-                  mb={[0, 0, 6, 6, 6]}
-                >
-                  <Link display={["none", "none", "flex", "flex", "flex"]}>
-                    <Icon
-                      as={FiDroplet}
-                      fontSize="2xl"
-                      className="active-icon"
-                    />
-                  </Link>
-                  <Link
-                    _hover={{ textDecor: "none" }}
-                    display={["flex", "flex", "none", "flex", "flex"]}
-                  >
-                    <Text className="active">Dashboard </Text>
-                  </Link>
-                </Flex>
-                <Flex
-                  className="sidebar-items"
-                  mr={[2, 6, 0, 0, 0]}
-                  mb={[0, 0, 6, 6, 6]}
-                >
-                  <Link display={["none", "none", "flex", "flex", "flex"]}>
-                    <Icon as={FiPieChart} fontSize="2xl" />
-                  </Link>
-                  <Link
-                    _hover={{ textDecor: "none" }}
-                    display={["flex", "flex", "none", "flex", "flex"]}
-                  >
-                    <Text>Wallet</Text>
-                  </Link>
-                </Flex>
-                <Flex
-                  className="sidebar-items"
-                  mr={[2, 6, 0, 0, 0]}
-                  mb={[0, 0, 6, 6, 6]}
-                >
-                  <Link display={["none", "none", "flex", "flex", "flex"]}>
-                    <Icon as={FiBox} fontSize="2xl" />
-                  </Link>
-                  <Link
-                    _hover={{ textDecor: "none" }}
-                    display={["flex", "flex", "none", "flex", "flex"]}
-                  >
-                    <Text>Services</Text>
-                  </Link>
 
-                  <Link
-                    _hover={{ textDecor: "none" }}
-                    display={["flex", "flex", "none", "flex", "flex"]}
-                  >
-                    
-                  </Link>
-                </Flex>
-                {address==ownerAddress&&(
-                <Flex
-                  className="sidebar-items"
-                  mr={[2, 6, 0, 0, 0]}
-                  mb={[0, 0, 6, 6, 6]}
-                >
-                  <Link href="/admin/#Admin" >
-                    <Icon as={FiBox} fontSize="2xl" display={["none", "none", "flex", "flex", "flex"]}/>
-                    
-                  </Link> 
-                  <Link href="/admin/#Admin"    _hover={{ textDecor: "none" }}
-                    display={["flex", "flex", "none", "flex", "flex"]} >
-                 <Text>Admin</Text>
-</Link>
-                </Flex>)}
-              </Flex>
-            </Flex>
+        {/* SideBar Component */}
+        <Sidebar/>
 
+        {/* SideBar Component End */}
 
-           
-            <Flex flexDir="column" alignItems="center" mb={10} mt={5}>
-              <Avatar my={2} src="avatar-1.jpg" />
-              <Text textAlign="center">Ola Silva A.</Text>
-            </Flex>
-          </Flex>
-        </Flex>
         {/* column2 */}
 
         {/* column3 */}
@@ -512,119 +276,15 @@ if (isConnected) {
               >
                 {defaultAccount}
               </Button> */}
-
-
-                
-              <ConnectButton.Custom>
-      {({
-        account,
-        chain,
-        openAccountModal,
-        openChainModal,
-        openConnectModal,
-        authenticationStatus,
-        mounted,
-      }) => {
-        // Note: If your app doesn't use authentication, you
-        // can remove all 'authenticationStatus' checks
-        const ready = mounted && authenticationStatus !== 'loading';
-        const connected =
-          ready &&
-          account &&
-          chain &&
-          (!authenticationStatus ||
-            authenticationStatus === 'authenticated');
-
-        return (
-          <div id="button-connect-wallet"
-style={{  alignItems:"center",alignContent:"center", width:"450px",border:"1px",height:"70px", fontSize:"18px",borderRadius:"40px", padding:"0.7rem",textAlign:"center" }} 
-            {...(!ready && {
-              'aria-hidden': true,
-              'style': {
-                opacity: 0,
-                pointerEvents: 'none',
-                userSelect: 'none',
-                display: 'flex', alignItems: 'center'
-                            
-              },
-            })}
-          >
-          { (() => {
-              
-            if (!connected) {
-                return (
-                  <button onClick={openConnectModal} type="button" style={{fontWeight:700, alignContent:"center",textAlign:"center",alignItems:"center",width:"100%" }} >
-                    Connect Wallet
-                  </button>
-                );
-              }
-
-              if (chain.unsupported) {
-               
-                return (
-                  <button onClick={openChainModal} type="button" style={{fontWeight:700, alignContent:"center",textAlign:"center",alignItems:"center",width:"100%" }}>
-                    Wrong network
-                  </button>
-                
-                );
-              }
-
-              return (
-                <div style={{ display: 'flex', gap: 12 }}>
-                  <button
-                    onClick={openChainModal}
-                    style={{ display: 'flex', alignItems: 'center' }}
-                    type="button"
-                  >
-                    {chain.hasIcon && (
-                      <div
-                        style={{
-                          background: chain.iconBackground,
-                          width: 12,
-                          height: 12,
-                          borderRadius: 999,
-                          overflow: 'hidden',
-                          marginRight: 4,
-                        }}
-                      >
-                        {chain.iconUrl && (
-                          <img
-                            alt={chain.name ?? 'Chain icon'}
-                            src={chain.iconUrl}
-                            style={{ width: 12, height: 12 }}
-                          />
-                        )}
-                      </div>
-                    )}
-                    {chain.name}
-                  </button>
-
-                  <button onClick={openAccountModal} type="button" style={{fontWeight:500, alignContent:"center",textAlign:"center",alignItems:"center",width:"70%" }}>
-                    {account.displayName}
-                    {account.displayBalance
-                      ? ` (${account.displayBalance})`
-                      : ''}
-                  </button>
-                </div>
-              );
-            })()}
-          </div>
-        );
-      }}
-    </ConnectButton.Custom> 
-
-                        
-
-
-
-
-
-
-
-
-
+              <ConnectButtonComp/>
             </Flex>
           </Flex>
+
+
+
+
+{/* //if connected */}
+{isConnected &&(
 
           <Flex
             w={["100%", "100%", "100%"]}
@@ -895,7 +555,7 @@ style={{  alignItems:"center",alignContent:"center", width:"450px",border:"1px",
                             mx="2"
                             align="end"
                           >
-                            {loadingUsdtPrice ? "Loading" : userBalance}
+                            {/* {loadingUsdtPrice ? "Loading" : userBalance} */}
                           </Text>
                           <Text
                             fontSize="xs"
@@ -936,14 +596,14 @@ style={{  alignItems:"center",alignContent:"center", width:"450px",border:"1px",
                         _hover={{
                           border: "0px",
                         }}
-                        onChange={handleSellBnbFromAmountChange}
-                        // value={fromAmount}
-                        value={sellBnbFromAmount ? sellBnbFromAmount : ""}
+                        // onChange={handleSellBnbFromAmountChange}
+                        // // value={fromAmount}
+                        // value={sellBnbFromAmount ? sellBnbFromAmount : ""}
                       />
                     </Flex>
                     <Flex flexDir="row" justifyContent="flex-end">
                       <Text fontSize="xs" fontWeight="bold">
-                        {fromTokenPriceUsd}
+                        {/* {fromTokenPriceUsd} */}
                       </Text>
                     </Flex>
 
@@ -962,7 +622,7 @@ style={{  alignItems:"center",alignContent:"center", width:"450px",border:"1px",
                         BUSD Balance:{" "}
                       </Text>
                       <Text fontSize="xs" fontWeight="bold">
-                        {busdBal}
+                        {/* {busdBal} */}
                       </Text>
                       {/* <Text fontSize="xs" fontWeight="bold" >{usdtBalance}</Text> */}
                     </Flex>
@@ -972,10 +632,10 @@ style={{  alignItems:"center",alignContent:"center", width:"450px",border:"1px",
                         py={5}
                         borderRadius="15px"
                         bgColor="#dc35464b"
-                        isDisabled={sellButtonDisabled == true}
+                        // isDisabled={sellButtonDisabled == true}
                         mt={5}
-                        onClick={() => swapBnbForUsdt()}
-                        isLoading={approveLoadingSell}
+                        // onClick={() => swapBnbForUsdt()}
+                        // isLoading={approveLoadingSell}
                         // disabled
                       >
                         Sell WBNB
@@ -985,7 +645,8 @@ style={{  alignItems:"center",alignContent:"center", width:"450px",border:"1px",
                   <Flex></Flex>
                 </Box>
                 <Box align={"center"}>
-                  <Skeleton isLoaded={!loadingSB}>
+                  <Skeleton isLoaded={1}>
+                  {/* <Skeleton isLoaded={!loadingSB}> */}
                     <Flex
                       bg="#f9f9f9"
                       p={4}
@@ -1016,7 +677,7 @@ style={{  alignItems:"center",alignContent:"center", width:"450px",border:"1px",
                             Spend BNB:{" "}
                           </Text>
                           <Text fontSize="xs" fontWeight="bold">
-                            {sellBnbFromAmount}
+                            {/* {sellBnbFromAmount} */}
                           </Text>
                           {/* <Text fontSize="xs" fontWeight="bold" >{usdtBalance}</Text> */}
                         </Flex>
@@ -1033,7 +694,7 @@ style={{  alignItems:"center",alignContent:"center", width:"450px",border:"1px",
                             Get USDT:{" "}
                           </Text>
                           <Text fontSize="xs" fontWeight="bold">
-                            ~{sellBnbExpectedAmount}
+                            {/* ~{sellBnbExpectedAmount} */}
                           </Text>
                           {/* <Text fontSize="xs" fontWeight="bold" >{usdtBalance}</Text> */}
                         </Flex>
@@ -1126,10 +787,10 @@ style={{  alignItems:"center",alignContent:"center", width:"450px",border:"1px",
                         _hover={{
                           border: "0px",
                         }}
-                        onChange={(e) => setTokenId(e.target.value)}
+                        // onChange={(e) => setTokenId(e.target.value)}
                         // value={fromAmount}
                         // value={toAmount? toAmount:""}
-                        value={tokenId}
+                        // value={tokenId}
                       />
                     </Flex>
                     <Flex flexDir="row" justifyContent="flex-end">
@@ -1197,7 +858,7 @@ style={{  alignItems:"center",alignContent:"center", width:"450px",border:"1px",
                   <Flex></Flex>
                 </Box>
                 <Box align={"center"}>
-                  <Skeleton isLoaded={!loadingSB}>
+                  <Skeleton isLoaded={1}>
                     <Flex
                       bg="#f9f9f9"
                       p={4}
@@ -1228,7 +889,7 @@ style={{  alignItems:"center",alignContent:"center", width:"450px",border:"1px",
                             Spend BUSD:{" "}
                           </Text>
                           <Text fontSize="xs" fontWeight="bold">
-                            {buyBnbFromAmount}
+                            {/* {buyBnbFromAmount} */}
                           </Text>
                           {/* <Text fontSize="xs" fontWeight="bold" >{usdtBalance}</Text> */}
                         </Flex>
@@ -1245,7 +906,7 @@ style={{  alignItems:"center",alignContent:"center", width:"450px",border:"1px",
                             Get BNB:{" "}
                           </Text>
                           <Text fontSize="xs" fontWeight="bold">
-                            ~{buyBnbExpectedAmount}
+                            {/* ~{buyBnbExpectedAmount} */}
                           </Text>
                           {/* <Text fontSize="xs" fontWeight="bold" >{usdtBalance}</Text> */}
                         </Flex>
@@ -1583,9 +1244,10 @@ style={{  alignItems:"center",alignContent:"center", width:"450px",border:"1px",
               )}
             </Flex>
           </Flex>
+)}
         </Flex>
 
-        <InchModal
+        {/* <InchModal
           open={isFromModalActive}
           onClose={() => setFromModalActive(false)}
           setToken={setFromToken}
@@ -1597,424 +1259,20 @@ style={{  alignItems:"center",alignContent:"center", width:"450px",border:"1px",
           onClose={() => setToModalActive(false)}
           setToken={setToToken}
           tokenList={tokenList}
-        />
+        /> */}
       </Flex>
    
     );
     
-  }
-  if(!isConnected){
-  return (
-    <Flex
-      h={[null, null, "100vh"]}
-      flexDir={["column", "column", "row"]}
-      overflow="hidden"
-      maxW="2000px"
-    >
-      <Flex
-        w={["100%", "100%", "10%", "15%", "15%"]}
-        flexDir="column"
-        alignItems="center"
-        backgroundColor="#001013"
-        color="#B495B1"
-      >
-        <Flex
-          flexDir="column"
-          justifyContent="space-between"
-          h={[null, null, "100vh"]}
-        >
-          <Flex flexDir="column" as="nav">
-            <Heading
-              mt={50}
-              mb={[25, 50, 100]}
-              fontSize={["4xl", "4xl", "2xl", "3xl", "4xl"]}
-              alignSelf="center"
-              letterSpacing="tight"
-            >
-              Mila.
-            </Heading>
-            <Flex
-              flexDir={["row", "row", "column", "column", "column"]}
-              align={["center", "center", "center", "flex-start", "flex-start"]}
-              justifyContent="center"
-              mb={[0, 0, 6, 6, 6]}
-            >
-              <Flex
-                className="sidebar-items"
-                mr={[2, 6, 0, 0, 0]}
-                mb={[0, 0, 6, 6, 6]}
-              >
-                <Link display={["none", "none", "flex", "flex", "flex"]}>
-                  <Icon as={FiHome} fontSize="2xl" />
-                </Link>
-                <Link
-                  _hover={{ textDecor: "none" }}
-                  display={["flex", "flex", "none", "flex", "flex"]}
-                >
-                  <Text>Home</Text>
-                </Link>
-              </Flex>
-              <Flex
-                className="sidebar-items"
-                mr={[2, 6, 0, 0, 0]}
-                mb={[0, 0, 6, 6, 6]}
-              >
-                <Link display={["none", "none", "flex", "flex", "flex"]}>
-                  <Icon as={FiDroplet} fontSize="2xl" className="active-icon" />
-                </Link>
-                <Link
-                  _hover={{ textDecor: "none" }}
-                  display={["flex", "flex", "none", "flex", "flex"]}
-                >
-                  <Text className="active">Dashboard</Text>
-                </Link>
-              </Flex>
-              <Flex
-                className="sidebar-items"
-                mr={[2, 6, 0, 0, 0]}
-                mb={[0, 0, 6, 6, 6]}
-              >
-                <Link display={["none", "none", "flex", "flex", "flex"]}>
-                  <Icon as={FiPieChart} fontSize="2xl" />
-                </Link>
-                <Link
-                  _hover={{ textDecor: "none" }}
-                  display={["flex", "flex", "none", "flex", "flex"]}
-                >
-                  <Text>Wallet</Text>
-                </Link>
-              </Flex>
-              <Flex
-                className="sidebar-items"
-                mr={[2, 6, 0, 0, 0]}
-                mb={[0, 0, 6, 6, 6]}
-              >
-                <Link display={["none", "none", "flex", "flex", "flex"]}>
-                  <Icon as={FiBox} fontSize="2xl" />
-                </Link>
-                <Link
-                  _hover={{ textDecor: "none" }}
-                  display={["flex", "flex", "none", "flex", "flex"]}
-                >
-                  <Text>Services</Text>
-                </Link>
-              </Flex>
-            </Flex>
-          </Flex>
-          <Flex flexDir="column" alignItems="center" mb={10} mt={5}>
-            <Avatar my={2} src="avatar-1.jpg" />
-            <Text textAlign="center">Ola Silva A.</Text>
-          </Flex>
-        </Flex>
-      </Flex>
-      {/* column 2 */}
-      <Flex
-        w={["100%", "100%", "60%", "60%", "55%"]}
-        p="3%"
-        flexDir="column"
-        overflow="auto"
-        minH="100vh"
-      >
-        <Heading fontWeight="normal">
-          Milala,{" "}
-          <Flex fontWeight="bold" display="inline-flex">
-            Blockchain.
-          </Flex>
-        </Heading>
-        <Text color="gray" fontSize="sm">
-          Invest in African Businesses from anywhere
-        </Text>
-        <Text fontWeight="bold" fontSize="2xl">
-          Connect Wallet
-        </Text>
-        <Flex justifyContent="space-between" mt={8} align="center">
-          <Text fontSize="sm" color="gray.700" fontWeight="bold">
-            Drip/USDT: ${chrtState.drip}
-          </Text>
-          <Button
-            borderRadius="20px"
-            w="auto"
-            boxShadow="xl"
-            variant="outline"
-            fontSize="x-small"
-            mr={0}
-          >
-            24hr
-          </Button>
-        </Flex>
-        <MyChart />
-        <Flex justifyContent="space-between" mt={8}>
-          <Flex align="flex-end">
-            <Heading as="h2" size="lg" letterSpacing="Tight">
-              Transactions
-            </Heading>
-            <Text fontSize="sm" color="gray" ml={4}>
-              Apr 2021
-            </Text>
-          </Flex>
-          <IconButton icon={<FiCalendar />} />
-        </Flex>
-        <Flex flexDir="column" fontSize="smaller">
-          <Flex overflow="auto">
-            <Table variant="unstyled" mt={4}>
-              <Thead>
-                <Tr color="gray">
-                  <Th> Name of Transation</Th>
-                  <Th> Category</Th>
-                  <Th isNumeric> Cashback</Th>
-                  <Th isNumeric> Amount</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {/* {bscScanData?.map((trans) => ( */}
-                <Tr>
-                  <Td>
-                    <Flex align="center">
-                      <Avatar size="sm" mr={2} src="avatar-1.jpg" />
-                      <Flex flexDir="column">
-                        <Heading size="sm" letterSpacing="tight">
-                          Amazon3
-                        </Heading>
-                        {/* <Text fontSize="sm" color="gray" noOfLines={1}>{trans.blockhash}</Text> */}
-                      </Flex>
-                    </Flex>
-                  </Td>
-                  <Td> Electronic Devices </Td>
-                  <Td isNumeric> +2$</Td>
-                  <Td isNumeric>
-                    {" "}
-                    <Text fontWeight="bold" display="inline-table">
-                      -$242
-                    </Text>
-                    .00
-                  </Td>
-                </Tr>
-                {/* ))} */}
-                <Tr>
-                  <Td>
-                    <Flex align="center">
-                      <Avatar size="sm" mr={2} src="avatar-1.jpg" />
-                      <Flex flexDir="column">
-                        <Heading size="sm" letterSpacing="tight">
-                          Amazon
-                        </Heading>
-                        <Text fontSize="sm" color="gray">
-                          Apr 24, 2021 at 1:40pm
-                        </Text>
-                      </Flex>
-                    </Flex>
-                  </Td>
-                  <Td> Electronic Devices </Td>
-                  <Td isNumeric> +2$</Td>
-                  <Td isNumeric>
-                    {" "}
-                    <Text fontWeight="bold" display="inline-table">
-                      -$242
-                    </Text>
-                    .00
-                  </Td>
-                </Tr>
-                <Tr>
-                  <Td>
-                    <Flex align="center">
-                      <Avatar size="sm" mr={2} src="avatar-1.jpg" />
-                      <Flex flexDir="column">
-                        <Heading size="sm" letterSpacing="tight">
-                          Amazon
-                        </Heading>
-                        <Text fontSize="sm" color="gray">
-                          Apr 24, 2021 at 1:40pm
-                        </Text>
-                      </Flex>
-                    </Flex>
-                  </Td>
-                  <Td> Electronic Devices </Td>
-                  <Td isNumeric> +2$</Td>
-                  <Td isNumeric>
-                    {" "}
-                    <Text fontWeight="bold" display="inline-table">
-                      -$242
-                    </Text>
-                    .00
-                  </Td>
-                </Tr>
-                {display === "show" && (
-                  <>
-                    {/* {bscScanData?.map((trans) => ( */}
-                    <Tr>
-                      <Td>
-                        <Flex align="center">
-                          <Avatar size="sm" mr={2} src="avatar-1.jpg" />
-                          <Flex flexDir="column">
-                            <Heading size="sm" letterSpacing="tight">
-                              Amazon2
-                            </Heading>
-                            {/* <Text fontSize="sm" color="gray">{trans.blockhash}</Text> */}
-                          </Flex>
-                        </Flex>
-                      </Td>
-                      <Td> Electronic Devices </Td>
-                      <Td isNumeric> +2$</Td>
-                      <Td isNumeric>
-                        {" "}
-                        <Text fontWeight="bold" display="inline-table">
-                          -$242
-                        </Text>
-                        .00
-                      </Td>
-                    </Tr>
-                    {/* ))} */}
-                  </>
-                )}
-              </Tbody>
-            </Table>
-          </Flex>
-          <Flex align="center">
-            <Divider />
-            <IconButton
-              icon={display === "show" ? <FiChevronUp /> : <FiChevronDown />}
-              onClick={() => {
-                if (display == "show") {
-                  changeDisplay("none");
-                } else {
-                  changeDisplay("show");
-                }
-              }}
-            />
-            <Divider />
-          </Flex>
-        </Flex>
-      </Flex>
-      {/* column 3 */}
-      <Flex
-        w={["100%", "100%", "35%"]}
-        minW={[null, null, "300px", "300px", "400px"]}
-        bgColor="#F5F5F5"
-        p="3%"
-        flexDir="column"
-        overflow="auto"
-      >
-        <Flex alignContent="center">
-          {/* <Button
-            // bgGradient='linear(to-l, #7928CA, #FF0080)'
-            id="button-connect-wallet"
-            borderRadius="3xl"
-            border="1px"
-            w="100%"
-            borderColor="gray.200"
-            py="6"
-            fontSize="sm"
-            letterSpacing="wide"
-            fontWeight="bold"
-            onClick={() => connect()}
-            // isLoading={isAuthenticating} onClick={() => authenticate()}
-          >
-            Connect Wallet
-          </Button> */}
+  
+  //   if(!isConnected){
+  // return (
+  //   <Flex
+  //     h={[null, null, "100vh"]}
+  //     flexDir={["column", "column", "row"]}
+  //     overflow="hidden"
+  //     maxW="2000px"
+  //   >THis is just for test</Flex>
+  // )}
 
-
-
-                     
-          <ConnectButton.Custom>
-      {({
-        account,
-        chain,
-        openAccountModal,
-        openChainModal,
-        openConnectModal,
-        authenticationStatus,
-        mounted,
-      }) => {
-        // Note: If your app doesn't use authentication, you
-        // can remove all 'authenticationStatus' checks
-        const ready = mounted && authenticationStatus !== 'loading';
-        const connected =
-          ready &&
-          account &&
-          chain &&
-          (!authenticationStatus ||
-            authenticationStatus === 'authenticated');
-
-        return (
-          <div id="button-connect-wallet"
-style={{  alignItems:"center",alignContent:"center", width:"100%",border:"1px", fontSize:"18px",borderRadius:"30px", padding:"0.7rem",textAlign:"center" }} 
-            {...(!ready && {
-              'aria-hidden': true,
-              'style': {
-                opacity: 0,
-                pointerEvents: 'none',
-                userSelect: 'none',
-                display: 'flex', alignItems: 'center'
-                            
-              },
-            })}
-          >
-            {(() => {
-              if (!connected) {
-                return (
-                  <button onClick={openConnectModal} type="button" style={{fontWeight:700, alignContent:"center",textAlign:"center",alignItems:"center",width:"100%" }} >
-                    Connect Wallet
-                  </button>
-                );
-              }
-
-              if (chain.unsupported) {
-                return (
-                  <button onClick={openChainModal} type="button">
-                    Wrong network
-                  </button>
-                );
-              }
-
-              return (
-                <div style={{ display: 'flex', gap: 12 }}>
-                  <button
-                    onClick={openChainModal}
-                    style={{ display: 'flex', alignItems: 'center' }}
-                    type="button"
-                  >
-                    {chain.hasIcon && (
-                      <div
-                        style={{
-                          background: chain.iconBackground,
-                          width: 12,
-                          height: 12,
-                          borderRadius: 999,
-                          overflow: 'hidden',
-                          marginRight: 4,
-                        }}
-                      >
-                        {chain.iconUrl && (
-                          <img
-                            alt={chain.name ?? 'Chain icon'}
-                            src={chain.iconUrl}
-                            style={{ width: 12, height: 12 }}
-                          />
-                        )}
-                      </div>
-                    )}
-                    {chain.name}
-                  </button>
-
-                  <button onClick={openAccountModal} type="button">
-                    {account.displayName}
-                    {account.displayBalance
-                      ? ` (${account.displayBalance})`
-                      : ''}
-                  </button>
-                </div>
-              );
-            })()}
-          </div>
-        );
-      }}
-    </ConnectButton.Custom> 
-
-          
-        </Flex>
-        <Flex alignContent="center"></Flex>
-      </Flex>
-    </Flex>
-  );
-}
 }
