@@ -188,7 +188,7 @@ useEffect(() => {
   console.log("error: ", tokenId)
   console.log("usdtBalance: ", totalUsdtBalance)
     
-  }, [milaTotalSupply, totalMilaBalance, usdtTotalSupply, totalUsdtBalance]);
+  }, [milaTotalSupply, totalMilaBalance, usdtTotalSupply, totalUsdtBalance, isConnected]);
 
 
 
