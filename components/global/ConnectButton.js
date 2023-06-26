@@ -1,5 +1,5 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useDisconnect } from 'wagmi';
+
 export const ConnectButtonComp = () => {
   return (
     <ConnectButton.Custom>
@@ -49,8 +49,10 @@ style={{  alignItems:"center",alignContent:"center", width:"450px",border:"1px",
               if (chain.unsupported) {
                
                 return (
-                 
-                  useDisconnect()
+                  <button onClick={openChainModal} type="button" style={{fontWeight:700, alignContent:"center",textAlign:"center",alignItems:"center",width:"100%" }}>
+                    Wrong network
+                  </button>
+                
                 );
               }
 
