@@ -195,6 +195,7 @@ import {
 
 
 return(
+  
 <Flex h={[null, null, "100vh"]}
  flexDir={["column", "column", "row"]}
         overflow="hidden"
@@ -606,6 +607,6 @@ style={{  alignItems:"center",alignContent:"center", width:"100%",border:"1px", 
    </Flex> 
   </Flex> 
   </Flex> 
- 
+
 )
   };

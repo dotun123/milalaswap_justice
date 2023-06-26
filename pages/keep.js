@@ -467,3 +467,10 @@ style={{  alignItems:"center",alignContent:"center", width:"100%",border:"1px", 
 
 
 // For Sidebar Component --End
+// const weiToToken = (bigNumber, decimal = 18) => {
+//   return ethers.utils.formatUnits(bigNumber.toString(), decimal);
+// };
+// const tokenToWei = (number, decimal = 18) => {
+//   return ethers.utils.parseUnits(number.toString(), decimal);
+// };
+

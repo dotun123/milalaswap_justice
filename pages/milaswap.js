@@ -74,6 +74,8 @@ import Web3 from 'web3';
 import { disconnect } from '@wagmi/core'
 import { Sidebar } from "../components/global/sidebar";
 import { ConnectButtonComp } from "../components/global/ConnectButton";
+import NotConnected from "../components/global/notConnected";
+
 
 
 
@@ -153,9 +155,9 @@ export default function Dashboard() {
   functionName: "totalSupply",
   })
 
-// useEffect(() => {
-
-// }, []);
+useEffect(() => {
+console.log("mila",milaData)
+});
 
   const { data: totalUsdtBalance, error: usdtTotalError } = useContractRead({
     address:contractAddress3,
@@ -183,7 +185,7 @@ useEffect(() => {
     let bal2 = totalUsdtBalance;
     setUsdtBalance(bal2);
   }
-  console.log("error: ", usdtTotalError)
+  console.log("error: ", tokenId)
   console.log("usdtBalance: ", totalUsdtBalance)
     
   }, [milaTotalSupply, totalMilaBalance, usdtTotalSupply, totalUsdtBalance]);
@@ -221,16 +223,9 @@ function weiValue(ethValue){
     ethers.utils.parseUnits(ethValue.toString(), 'ether').toString()
   )
 };
-const weiToToken = (bigNumber, decimal = 18) => {
-  return ethers.utils.formatUnits(bigNumber.toString(), decimal);
-};
-const tokenToWei = (number, decimal = 18) => {
-  return ethers.utils.parseUnits(number.toString(), decimal);
-};
 
-// const{ connect, connectors, error, isLoading, pendingConnector } = useConnect()
- 
-// const { disconnect } = useDisconnect()
+
+
 
 
 
@@ -248,53 +243,49 @@ const tokenToWei = (number, decimal = 18) => {
         {/* SideBar Component End */}
 
         {/* column2 */}
-
-        {/* column3 */}
+        
+        
         <Flex flexDir="column" w={["100%", "100%", "100%","100","100"]}>
-          <Flex
-            w={["100%", "100%", "100%"]}
-            minW={[null, null, "300px", "300px", "400px"]}
-            bgColor="#F5F5F5"
-            p="3%"
-            flexDir="column"
-            // overflow="auto"
-            align="center"
-          >
-            <Flex alignContent="center">
-              {/* <Button
-                bgGradient="linear(to-l, #7928CA, #FF0080)"
-                id="button-connect-wallet"
-                borderRadius="3xl"
-                border="1px"
-                w="100%"
-                borderColor="gray.200"
-                py="6"
-                fontSize="sm"
-                letterSpacing="wide"
-                fontWeight="bold"
-                onClick={() => disconnect()}
-              >
-                {defaultAccount}
-              </Button> */}
-              <ConnectButtonComp/>
-            </Flex>
-          </Flex>
+<Flex
+   w={["100%", "100%", "100%"]}
+   minW={[null, null, "300px", "300px", "400px"]}
+   bgColor="#F5F5F5"
+   p="3%"
+   flexDir="column"
+   // overflow="auto"
+   align="center"
+ >
+  {(!isConnected)?<NotConnected/>:  <ConnectButtonComp/>}
+   <Flex alignContent="center">
+     
+  
+   </Flex>
+ </Flex>
+     
 
 
 
 
-{/* //if connected */}
 {isConnected &&(
 
+
+
+       
+ 
           <Flex
-            w={["100%", "100%", "100%"]}
-            minW={[null, null, "300px", "300px", "1200px"]}
+            w={["100%", "100%", "100%","100%","100%"]}
+            
             bgColor="#F5F5F5"
             p="3%"
             flexDir="column"
             overflow="auto"
             align="center"
           >
+
+
+            <Flex alignContent="center">
+            
+            </Flex>
             <Flex
               w={["100%", "100%", "100%","100%","100%"]}
               minW={[null, null, "300px", "300px", "900px"]}
@@ -360,7 +351,7 @@ const tokenToWei = (number, decimal = 18) => {
                       </Flex>
                      
                       <Text  color="#D8ABD8" >milaToken Address : </Text>
-                      <Text fontSize="sm">{milaData[0]}</Text>
+                      <Text fontSize="sm">{milaData[0].toString()}</Text>
                      
                     
                      
@@ -473,7 +464,7 @@ const tokenToWei = (number, decimal = 18) => {
                              milaToken Fee:
                             
                             </Text>
-                       {ethValue(milaData[4].toString())}
+                       {ethValue(milaData[4].toString())}{" %"}
                     </Flex>
                     
                   </Box>
@@ -754,7 +745,7 @@ const tokenToWei = (number, decimal = 18) => {
                             mx="2"
                             align="end"
                           >
-                            {/* {loadingPrice? "Loading": "$"+tokenBalance} */}
+                           
                           </Text>
                         </Flex>
                         <Button
@@ -764,7 +755,7 @@ const tokenToWei = (number, decimal = 18) => {
                           variant="outline"
                           fontSize="sm"
                           onClick={() => {
-                            setBuyBnbFromAmount(busdBal);
+                            setTokenId(usdtBalance);
                           }}
                         >
                           max
@@ -783,14 +774,17 @@ const tokenToWei = (number, decimal = 18) => {
                     >
                       <Input
                         placeholder="0.0"
+                        type="number"
+                        min="1"
+                        max="5"
                         w="100%"
+                     
                         _hover={{
                           border: "0px",
                         }}
-                        // onChange={(e) => setTokenId(e.target.value)}
-                        // value={fromAmount}
-                        // value={toAmount? toAmount:""}
-                        // value={tokenId}
+                        onChange={(e) => setTokenId(e.target.value)}
+                  
+                        value={tokenId}
                       />
                     </Flex>
                     <Flex flexDir="row" justifyContent="flex-end">
@@ -819,25 +813,13 @@ const tokenToWei = (number, decimal = 18) => {
                       {/* <Text fontSize="xs" fontWeight="bold" >{usdtBalance}</Text> */}
                     </Flex>
                     <Flex flexDir="row" w={"100%"} justifyContent="flex-end">
-                      {/* <Button
-                                    w={"50%"}
-                                    py={5}
-                                    borderRadius="15px"
-                                    bgColor="#dc35464b"
-                                    isDisabled={enableBuyButton == true}
-                                    mt={5}
-                                    // onClick={() => trySwap(currentTrade)}
-                                    onClick={() => approvebutton()}
-                                    // rightIcon={<ArrowForwardIcon />} 
-                                    mr={10}
-                                    isLoading={approveLoading} 
-                            >Approve</Button> */}
+                     
                       <Button
                         w={"50%"}
                         py={5}
                         borderRadius="15px"
                         bgColor="#dc35464b"
-                        isDisabled={isSuccess}
+                        disabled={tokenId>usdtBalance}
                         mt={5}
                         onClick={()=>{
                           try{
@@ -886,7 +868,7 @@ const tokenToWei = (number, decimal = 18) => {
                             fontWeight="bold"
                             color="gray.500"
                           >
-                            Spend BUSD:{" "}
+                            Spend USDT:{" "}{tokenId}{" $"}
                           </Text>
                           <Text fontSize="xs" fontWeight="bold">
                             {/* {buyBnbFromAmount} */}
@@ -903,7 +885,7 @@ const tokenToWei = (number, decimal = 18) => {
                             fontWeight="bold"
                             color="gray.500"
                           >
-                            Get BNB:{" "}
+                            Get MILA:{" "}{(tokenId)*ethValue(milaData[3].toString())}{" MILA"}
                           </Text>
                           <Text fontSize="xs" fontWeight="bold">
                             {/* ~{buyBnbExpectedAmount} */}
@@ -977,7 +959,7 @@ const tokenToWei = (number, decimal = 18) => {
                           border: "0px",
                         }}
                         // onChange={handleFromAmountChange}
-                        // value={fromAmount}
+                     
                         // value={fromAmount? fromAmount:0}
                       />
 
@@ -1239,7 +1221,7 @@ const tokenToWei = (number, decimal = 18) => {
                       Swap
                     </Button>
                   </Flex>
-                  <Flex></Flex>
+                 
                 </Box>
               )}
             </Flex>
@@ -1247,32 +1229,8 @@ const tokenToWei = (number, decimal = 18) => {
 )}
         </Flex>
 
-        {/* <InchModal
-          open={isFromModalActive}
-          onClose={() => setFromModalActive(false)}
-          setToken={setFromToken}
-          tokenList={tokenList}
-        />
-
-        <InchModal
-          open={isToModalActive}
-          onClose={() => setToModalActive(false)}
-          setToken={setToToken}
-          tokenList={tokenList}
-        /> */}
-      </Flex>
-   
-    );
+   </Flex>
     
-  
-  //   if(!isConnected){
-  // return (
-  //   <Flex
-  //     h={[null, null, "100vh"]}
-  //     flexDir={["column", "column", "row"]}
-  //     overflow="hidden"
-  //     maxW="2000px"
-  //   >THis is just for test</Flex>
-  // )}
-
+   
+    )   
 }

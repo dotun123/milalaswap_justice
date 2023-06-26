@@ -1,4 +1,5 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useDisconnect } from 'wagmi';
 export const ConnectButtonComp = () => {
   return (
     <ConnectButton.Custom>
@@ -39,7 +40,7 @@ style={{  alignItems:"center",alignContent:"center", width:"450px",border:"1px",
               
             if (!connected) {
                 return (
-                  <button onClick={openConnectModal} type="button" style={{fontWeight:700, alignContent:"center",textAlign:"center",alignItems:"center",width:"100%" }} >
+                  <button onClick={openConnectModal} type="button" style={{fontWeight:700, alignContent:"center",textAlign:"center",alignItems:"center",textAlign:"center" }} >
                     Connect Wallet
                   </button>
                 );
@@ -48,10 +49,8 @@ style={{  alignItems:"center",alignContent:"center", width:"450px",border:"1px",
               if (chain.unsupported) {
                
                 return (
-                  <button onClick={openChainModal} type="button" style={{fontWeight:700, alignContent:"center",textAlign:"center",alignItems:"center",width:"100%" }}>
-                    Wrong network
-                  </button>
-                
+                 
+                  useDisconnect()
                 );
               }
 
@@ -71,6 +70,7 @@ style={{  alignItems:"center",alignContent:"center", width:"450px",border:"1px",
                           borderRadius: 999,
                           overflow: 'hidden',
                           marginRight: 4,
+                         
                         }}
                       >
                         {chain.iconUrl && (
@@ -80,12 +80,15 @@ style={{  alignItems:"center",alignContent:"center", width:"450px",border:"1px",
                             style={{ width: 12, height: 12 }}
                           />
                         )}
+                       
                       </div>
+                     
                     )}
-                    {chain.name}
+                   {chain.name}
+                    
                   </button>
 
-                  <button onClick={openAccountModal} type="button" style={{fontWeight:500, alignContent:"center",textAlign:"center",alignItems:"center",width:"70%" }}>
+                  <button onClick={openAccountModal} type="button" style={{fontWeight:500, alignContent:"center",textAlign:"center",alignItems:"center",width:"90%"}}>
                     {account.displayName}
                     {account.displayBalance
                       ? ` (${account.displayBalance})`
