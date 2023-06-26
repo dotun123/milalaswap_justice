@@ -351,7 +351,7 @@ function weiValue(ethValue){
                       </Flex>
                      
                       <Text  color="#D8ABD8" >milaToken Address : </Text>
-                      <Text fontSize="sm">{milaData[0].toString()}</Text>
+                      <Text fontSize="sm">{(milaData?milaData[0]:0).toString()}</Text>
                      
                     
                      
@@ -885,7 +885,7 @@ function weiValue(ethValue){
                             fontWeight="bold"
                             color="gray.500"
                           >
-                            Get MILA:{" "}{(tokenId)*ethValue(milaData[3].toString())}{" MILA"}
+                            Get MILA:{" "}{(tokenId)*ethValue((milaData?milaData[3]:0).toString())}{" MILA"}
                           </Text>
                           <Text fontSize="xs" fontWeight="bold">
                             {/* ~{buyBnbExpectedAmount} */}
