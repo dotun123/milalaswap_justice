@@ -181,14 +181,14 @@ useEffect(() => {
     let total = usdtTotalSupply;
     setUsdtSupply(total);
   } 
-  if (totalUsdtBalance) {
+  // if (totalUsdtBalance) {
     let bal2 = totalUsdtBalance;
     setUsdtBalance(bal2);
-  }
+  // }
   console.log("error: ", tokenId)
   console.log("usdtBalance: ", totalUsdtBalance)
     
-  }, [milaTotalSupply, totalMilaBalance, usdtTotalSupply, totalUsdtBalance, isConnected]);
+  }, [milaTotalSupply, totalMilaBalance, usdtTotalSupply, totalUsdtBalance, isConnected, address]);
 
 
 
@@ -214,9 +214,11 @@ const { config:milaBuy } = usePrepareContractWrite({
 const { data:buyData,  isSuccess:buySuccess, write:writeBuy } = useContractWrite(milaBuy)
 
 function ethValue(weiValue){
-  return(
-    ethers.utils.formatEther(weiValue)
-  )
+  if (weiValue != undefined){
+    return(
+      ethers.utils.formatEther(weiValue)
+    )
+  }
 };
 function weiValue(ethValue){
   return(
@@ -737,7 +739,7 @@ function weiValue(ethValue){
                             mx="2"
                             align="end"
                           >
-                            {loadingUsdtPrice ? "Loading" : ethValue(usdtBalance.toString())}{" "}$
+                            {loadingUsdtPrice ? "Loading" : ethValue(usdtBalance?.toString())}{" "}$
                           </Text>
                           <Text
                             fontSize="xs"
