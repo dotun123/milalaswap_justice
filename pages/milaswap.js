@@ -47,36 +47,15 @@ import {
   FiBell,
   FiDroplet,
 } from "react-icons/fi";
-// import MyChart from "../components/Mychart";
-// import { Line, Chart } from "react-chartjs-2";
-
-// import InchModal from "../components/InchModal";
-// import useInchDex from "../src/hooks/useInchDex";
-
-import {
-  useAccount,
-  useConnect,
-  useDisconnect,
-  useEnsAvatar,
-  useEnsName,
-} from 'wagmi'
 
 
-import { contractABI,contractAddress } from "./abi/utils/constant";
-import { contractABI2,contractAddress2 } from "./abi/utils/constant";
-import { contractABI3,contractAddress3 } from "./abi/utils/constant";
-import { useContractRead } from 'wagmi'
-import { useContractEvent } from 'wagmi'
-import { useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { contractABI,contractAddress,contractABI2,contractAddress2,contractABI3,contractAddress3  } from "./abi/utils/constant";
 
+import {  } from 'wagmi'
+
+import { useAccount,useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi';
 import { ethers } from "ethers";
-import Web3 from 'web3';
-import { disconnect } from '@wagmi/core'
-import { Sidebar } from "../components/global/sidebar";
-import { ConnectButtonComp } from "../components/global/ConnectButton";
-import NotConnected from "../components/global/notConnected";
-
-
+import { Loading,NotConnected,ConnectButtonComp,Sidebar } from "../components/global";
 
 
 export default function Dashboard() {
@@ -194,13 +173,6 @@ useEffect(() => {
 
 
 
-const { config:milaApprove } = usePrepareContractWrite({
-  address: contractAddress3,
-  abi: contractABI3,
-  functionName: 'approve',
-  args:[address,weiValue(tokenId)]
-})
-const { data:approveData,  isSuccess, write:writeApprove } = useContractWrite(milaApprove)
 
 
 
@@ -210,8 +182,27 @@ const { config:milaBuy } = usePrepareContractWrite({
   abi: contractABI2,
   functionName: 'buyMila',
   args:[weiValue(tokenId)],
+  onSuccess(writeBuy){
+   console.log("sucess:",writeBuy)
+ },
 })
-const { data:buyData,  isSuccess:buySuccess, write:writeBuy } = useContractWrite(milaBuy)
+const { data:buyData,  isLoading:buyLoading, write:writeBuy } = useContractWrite(milaBuy)
+
+const { config:milaApprove } = usePrepareContractWrite({
+  address: contractAddress3,
+  abi: contractABI3,
+  functionName: 'approve',
+  args:[address,weiValue(tokenId)],
+  onSuccess(writeApprove){
+console.log("sucess:",writeApprove)
+  },
+})
+const { data:approveData , isloading:approveLoading, write:writeApprove } = useContractWrite(milaApprove)
+
+const Max=usdtBalance.toString()/(milaData?milaData[3]:0).toString()
+
+
+
 
 function ethValue(weiValue){
   return(
@@ -245,17 +236,18 @@ function weiValue(ethValue){
         {/* column2 */}
         
         
-        <Flex flexDir="column" w={["100%", "100%", "100%","100","100"]}>
+        <Flex flexDir="column" w={["100%", "100%", "100%"]}>
 <Flex
    w={["100%", "100%", "100%"]}
    minW={[null, null, "300px", "300px", "400px"]}
    bgColor="#F5F5F5"
    p="3%"
    flexDir="column"
-   // overflow="auto"
+   overflow="auto"
    align="center"
  >
-  {(!isConnected)?<NotConnected/>:  <ConnectButtonComp/>}
+  {(!isConnected)?<NotConnected/>:<ConnectButtonComp/>}
+  
    <Flex alignContent="center">
      
   
@@ -755,7 +747,7 @@ function weiValue(ethValue){
                           variant="outline"
                           fontSize="sm"
                           onClick={() => {
-                            setTokenId(usdtBalance);
+                            setTokenId(Max);
                           }}
                         >
                           max
@@ -775,8 +767,7 @@ function weiValue(ethValue){
                       <Input
                         placeholder="0.0"
                         type="number"
-                        min="1"
-                        max="5"
+                       
                         w="100%"
                      
                         _hover={{
@@ -813,13 +804,13 @@ function weiValue(ethValue){
                       {/* <Text fontSize="xs" fontWeight="bold" >{usdtBalance}</Text> */}
                     </Flex>
                     <Flex flexDir="row" w={"100%"} justifyContent="flex-end">
-                     
-                      <Button
+                    {buyLoading?<Loading/>:(<Button
                         w={"50%"}
                         py={5}
                         borderRadius="15px"
                         bgColor="#dc35464b"
-                        disabled={tokenId>usdtBalance}
+                        disabled={tokenId>Max}
+                         
                         mt={5}
                         onClick={()=>{
                           try{
@@ -827,14 +818,17 @@ function weiValue(ethValue){
                             writeBuy?.();
                       
                           }
+                         
                           catch(err){
-                            console.log(err);
+                            console.log("unsuccessfully transaction:",err);
                           }
-                        }}
+
+                          }}
                        
                       >
                         Buy MILA
-                      </Button>
+                      </Button>)}
+                      
                     </Flex>
                   </Flex>
                   <Flex></Flex>
@@ -868,7 +862,7 @@ function weiValue(ethValue){
                             fontWeight="bold"
                             color="gray.500"
                           >
-                            Spend USDT:{" "}{tokenId}{" $"}
+                            Spend USDT:{" "}{(tokenId)*ethValue((milaData?milaData[3]:0).toString())}{" $"}
                           </Text>
                           <Text fontSize="xs" fontWeight="bold">
                             {/* {buyBnbFromAmount} */}
@@ -885,7 +879,7 @@ function weiValue(ethValue){
                             fontWeight="bold"
                             color="gray.500"
                           >
-                            Get MILA:{" "}{(tokenId)*ethValue((milaData?milaData[3]:0).toString())}{" MILA"}
+                            Get MILA:{" "}{tokenId}{" MILA"}
                           </Text>
                           <Text fontSize="xs" fontWeight="bold">
                             {/* ~{buyBnbExpectedAmount} */}
