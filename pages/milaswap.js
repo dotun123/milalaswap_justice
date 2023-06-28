@@ -212,9 +212,11 @@ function ethValue(weiValue){
   }
 };
 function weiValue(ethValue){
-  return(
-    ethers.utils.parseUnits(ethValue.toString(), 'ether').toString()
-  )
+  if((ethValue != undefined) && (ethValue != "")){
+    return(
+      ethers.utils.parseUnits(ethValue.toString(), 'ether').toString()
+    )
+  }
 };
 
 
