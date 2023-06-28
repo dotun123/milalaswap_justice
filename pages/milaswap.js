@@ -199,7 +199,7 @@ console.log("sucess:",writeApprove)
 })
 const { data:approveData , isloading:approveLoading, write:writeApprove } = useContractWrite(milaApprove)
 
-const Max=usdtBalance.toString()/(milaData?milaData[3]:0).toString()
+const Max=usdtBalance?.toString()/(milaData?milaData[3]:0).toString()
 
 
 
