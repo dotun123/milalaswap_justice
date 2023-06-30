@@ -57,7 +57,7 @@ import {
 
 import {ownerAddress} from "../../pages/abi/utils/constant"
 export const Sidebar = () => {
-  const { address, connector, isConnected } = useAccount()
+  const { address} = useAccount()
   
   return (
     <Flex
@@ -121,7 +121,7 @@ export const Sidebar = () => {
                       className="active-icon"
                     />
                   </Link>
-                  <Link
+                  <Link href="/milaswap"
                     _hover={{ textDecor: "none" }}
                     display={["flex", "flex", "none", "flex", "flex"]}
                   >
@@ -171,11 +171,11 @@ export const Sidebar = () => {
                   mr={[2, 6, 0, 0, 0]}
                   mb={[0, 0, 6, 6, 6]}
                 >
-                  <Link href="/admin/#Admin" >
+                  <Link href="/admin" >
                     <Icon as={FiBox} fontSize="2xl" display={["none", "none", "flex", "flex", "flex"]}/>
                     
                   </Link> 
-                  <Link href="/admin/#Admin"    _hover={{ textDecor: "none" }}
+                  <Link href="/admin"    _hover={{ textDecor: "none" }}
                     display={["flex", "flex", "none", "flex", "flex"]} >
                  <Text>Admin</Text>
                 </Link>

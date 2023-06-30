@@ -1,59 +1,27 @@
 import {
   Flex,
   Heading,
-  Avatar,
-  AvatarGroup,
   Text,
   Icon,
   IconButton,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
   Divider,
   Link,
   Box,
   Button,
   Input,
-  InputGroup,
-  InputLeftElement,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  useDisclosure,
   Skeleton,
-  SkeletonCircle,
-  SkeletonText,
-  Alert,
+  
 } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState, useRef } from "react";
-import {
-  FiHome,
-  FiPieChart,
-  FiDollarSign,
-  FiBox,
-  FiCalendar,
-  FiChevronDown,
-  FiChevronUp,
-  FiPlus,
-  FiCreditCard,
-  FiSearch,
-  FiBell,
-  FiDroplet,
-} from "react-icons/fi";
+import { FiChevronDown,FiChevronUp,FiCreditCard,} from "react-icons/fi";
 
 
 import { contractABI,contractAddress,contractABI2,contractAddress2,contractABI3,contractAddress3  } from "./abi/utils/constant";
 
-import {  } from 'wagmi'
 
-import { useAccount,useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi';
+
+import {ownerAddress} from "./abi/utils/constant";
+import { useAccount,useContractRead, useContractWrite, usePrepareContractWrite,useWaitForTransaction } from 'wagmi';
 import { ethers } from "ethers";
 import { Loading,NotConnected,ConnectButtonComp,Sidebar } from "../components/global";
 
@@ -61,7 +29,8 @@ import { Loading,NotConnected,ConnectButtonComp,Sidebar } from "../components/gl
 export default function Dashboard() {
   const [display, changeDisplay] = useState("hide");
   const [value, changeValue] = useState(1);
-  
+ 
+
   const [sellBnbQuote, setSellBnbQuote] = useState({
     sbToTokenPrice: null,
     sbFromTokenPrice: null,
@@ -83,20 +52,15 @@ export default function Dashboard() {
 
    const [loadingUsdtPrice, setLoadingUsdtPrice] = useState(false);
   
-   const [approveLoadingSell, setapproveLoadingSell] = useState(false);
-   
 
   
-
-   let chainId;
-   let web3;
 
   const [supplyData, setSupplyData] = useState(0);
   const [milaBalance, setMilaBalance] = useState(0);
   const [usdtBalance, setUsdtBalance] = useState(0);
   const [usdtData, setUsdtSupply] = useState(0);
-  const [tokenId, setTokenId] = useState('0');
-  const { address, connector, isConnected } = useAccount()
+  const [tokenId, setTokenId] = useState("");
+  const { address,  isConnected } = useAccount()
 
   const { data: totalMilaBalance, error: totalError } = useContractRead({
     address:contractAddress,
@@ -105,15 +69,6 @@ export default function Dashboard() {
     args:[address],
      })
 
-  // useEffect(() => {
-
-  // }, []);
-
-  /* console.log data to view variables */
-  // useEffect(() => {
-   
-  //   console.log("totalMilaBalance:", totalMilaBalance);
-  // })
 
   const { data: milaTotalSupply, error: totalSupplyError } = useContractRead({
     address:contractAddress,
@@ -134,9 +89,7 @@ export default function Dashboard() {
   functionName: "totalSupply",
   })
 
-useEffect(() => {
-console.log("mila",milaData)
-});
+
 
   const { data: totalUsdtBalance, error: usdtTotalError } = useContractRead({
     address:contractAddress3,
@@ -166,43 +119,58 @@ useEffect(() => {
   // }
   console.log("error: ", tokenId)
   console.log("usdtBalance: ", totalUsdtBalance)
+  console.log("mila",milaData)
+  }, [milaTotalSupply, totalMilaBalance, usdtTotalSupply, totalUsdtBalance, isConnected, address ]);
+
+
+  
+
+ const { config:milaApprove } = usePrepareContractWrite({
+    address: contractAddress3,
+    abi: contractABI3,
+    functionName: 'approve',
+    args:[contractAddress2,weiValue(tokenId)],
+    gas: 1_000_000n,
     
-  }, [milaTotalSupply, totalMilaBalance, usdtTotalSupply, totalUsdtBalance, isConnected, address]);
+    onSuccess(writeApprove){
+  console.log("sucess:",writeApprove)
+    },
+  })
+ 
+const { data:approveData ,isLoading:appLoading, write:writeApprove } = useContractWrite(milaApprove)
 
+  const { isLoading:waitLoading, isSuccess:waitSuccess } = useWaitForTransaction({
+    hash: approveData?.hash,
+  })
 
-
-
-
-
-
+  console.log("hash:",waitSuccess,waitLoading)
 
 
 const { config:milaBuy } = usePrepareContractWrite({
   address: contractAddress2,
   abi: contractABI2,
   functionName: 'buyMila',
-  args:[weiValue(tokenId)],
+  args:[(tokenId)],
+  gas: 1_000_000n,
+
   onSuccess(writeBuy){
    console.log("sucess:",writeBuy)
  },
 })
-const { data:buyData,  isLoading:buyLoading, write:writeBuy } = useContractWrite(milaBuy)
 
-const { config:milaApprove } = usePrepareContractWrite({
-  address: contractAddress3,
-  abi: contractABI3,
-  functionName: 'approve',
-  args:[address,weiValue(tokenId)],
-  onSuccess(writeApprove){
-console.log("sucess:",writeApprove)
-  },
-})
-const { data:approveData , isloading:approveLoading, write:writeApprove } = useContractWrite(milaApprove)
+const { data:buyData , isLoading:buyLoading, write:writeBuy} = useContractWrite(milaBuy)
 
+const { isLoading:botLoading, isSuccess:botSuccess } = useWaitForTransaction({
+    hash: buyData?.hash,
+  })
+
+  console.log("hash2:",botSuccess,botLoading);
+  console.log("Loading:",appLoading,buyLoading);
+ 
+ 
 const Max=usdtBalance?.toString()/(milaData?milaData[3]:0).toString()
-
-
-
+const url="https://mumbai.polygonscan.com/address/" + (milaData ? milaData[0] : 0).toString();
+const url2="https://mumbai.polygonscan.com/address/" + (milaData ? milaData[1] : 0).toString();
 
 function ethValue(weiValue){
   if (weiValue != undefined){
@@ -225,7 +193,7 @@ function weiValue(ethValue){
 
 
     return (
-      <Flex id="milaswap"
+      <Flex 
         h={[null, null, "100vh"]}
         flexDir={["column", "column", "row"]}
         overflow="hidden"
@@ -347,7 +315,7 @@ function weiValue(ethValue){
                       </Flex>
                      
                       <Text  color="#D8ABD8" >milaToken Address : </Text>
-                      <Text fontSize="sm">{(milaData?milaData[0]:0).toString()}</Text>
+                    <Link href={url}> <Text fontSize="sm">{(milaData?milaData[0]:0).toString()}</Text></Link> 
                      
                     
                      
@@ -397,9 +365,11 @@ function weiValue(ethValue){
                             >
                              MilaUsdt Address:
                             </Text>
+                            <Link href={url2}>
                             <Text fontSize="sm" >
-                              {milaData[1]}
+                            {(milaData?milaData[1]:0).toString()}
                             </Text>
+                            </Link>
                           </Flex>
                           <Flex flexDir="column">
                             <Text
@@ -439,7 +409,7 @@ function weiValue(ethValue){
                           <Text fontWeight="bold" fontSize="xl">
                            
                           </Text>
-                          {ethValue(milaData[3].toString())}
+                          {ethValue((milaData?milaData[3]:0).toString())}
                         </Flex>
                         <Flex align="center">
                           <Icon mr={2} as={FiCreditCard} />
@@ -460,7 +430,7 @@ function weiValue(ethValue){
                              milaToken Fee:
                             
                             </Text>
-                       {ethValue(milaData[4].toString())}{" %"}
+                       {ethValue((milaData?milaData[4]:0).toString())}{" %"}
                     </Flex>
                     
                   </Box>
@@ -808,30 +778,19 @@ function weiValue(ethValue){
                       {/* <Text fontSize="xs" fontWeight="bold" >{usdtBalance}</Text> */}
                     </Flex>
                     <Flex flexDir="row" w={"100%"} justifyContent="flex-end">
-                    {buyLoading?<Loading/>:(<Button
-                        w={"50%"}
-                        py={5}
-                        borderRadius="15px"
-                        bgColor="#dc35464b"
-                        disabled={tokenId>Max}
-                         
-                        mt={5}
-                        onClick={()=>{
-                          try{
+                 
+                      {buyLoading?<Loading/>:(<Button w={"50%"} py={5} borderRadius="15px" bgColor="#dc35464b"  disabled={tokenId>Max}  mt={5}
+                        onClick={()=>{try{
                             writeApprove?.();
-                            writeBuy?.();
-                      
+                            writeBuy?.() ;
                           }
-                         
                           catch(err){
-                            console.log("unsuccessfully transaction:",err);
-                          }
 
-                          }}
+                         console.log(err);
+                          }
+                        } }
                        
-                      >
-                        Buy MILA
-                      </Button>)}
+                      >Buy MILA</Button>)}
                       
                     </Flex>
                   </Flex>

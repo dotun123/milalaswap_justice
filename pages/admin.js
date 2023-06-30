@@ -75,9 +75,11 @@ import {
   
 
   function weiValue(ethValue){
-    return(
-      ethers.utils.parseUnits(ethValue.toString(), 'ether').toString()
-    )
+    if((ethValue != undefined) && (ethValue != "")){
+      return(
+        ethers.utils.parseUnits(ethValue.toString(), 'ether').toString()
+      )
+    }
   };
 
 
@@ -177,7 +179,7 @@ import {
     
     
     
-    
+   
 
 
 
@@ -247,7 +249,7 @@ return(
             <Link display={["none", "none", "flex", "flex", "flex"]}>
               <Icon as={FiDroplet} fontSize="2xl" className="active-icon" />
             </Link>
-            <Link href="/milaswap/#milaswap"
+            <Link href="/milaswap"
               _hover={{ textDecor: "none" }}
               display={["flex", "flex", "none", "flex", "flex"]}
             >
@@ -289,11 +291,11 @@ return(
                   mr={[2, 6, 0, 0, 0]}
                   mb={[0, 0, 6, 6, 6]}
                 >
-                   <Link href="/admin/#Admin" >
+                   <Link href="/admin" >
                     <Icon as={FiBox} fontSize="2xl" display={["none", "none", "flex", "flex", "flex"]}/>
                     
                   </Link> 
-                  <Link href="/admin/#Admin"    _hover={{ textDecor: "none" }}
+                  <Link href="/admin"    _hover={{ textDecor: "none" }}
                     display={["flex", "flex", "none", "flex", "flex"]} >
                  <Text>Admin</Text>
 </Link>
@@ -409,7 +411,7 @@ style={{  alignItems:"center",alignContent:"center", width:"100%",border:"1px", 
     </ConnectButton.Custom> 
    
  
-   <Flex  id="Admin" flexDir={["column", "column","row","row", "row"]}
+   <Flex   flexDir={["column", "column","row","row", "row"]}
   justifyContent={"center"}  overflow="hidden" mt={["30px","30px","20%"]}
      ml={["40px","40px","0"]}
   w={["80%","80%","100%","100%","100%"]} >
@@ -540,7 +542,7 @@ style={{  alignItems:"center",alignContent:"center", width:"100%",border:"1px", 
             >
               MILA Bal:
             </Text>
-            {ethValue(milaBalance.toString())}
+            {ethValue(milaBalance.toString())}{" MILA"}
            
           </Flex>
        
