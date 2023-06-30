@@ -474,3 +474,201 @@ style={{  alignItems:"center",alignContent:"center", width:"100%",border:"1px", 
 //   return ethers.utils.parseUnits(number.toString(), decimal);
 // };
 
+
+// for sell box
+<Flex
+                borderRadius="3xl"
+                border="0px"
+                borderColor="gray.200"
+                minW={[null, null, "300px", "300px", "400px"]}
+                flexDir="column"
+              >
+<Box
+bg="#ffffff"
+p={4}
+mt={8}
+borderRadius="20px"
+border="0px"
+borderColor="#dc35464b"
+boxShadow="xl"
+color="gray.700"
+>
+<Flex flexDir="column">
+  <Flex flexDir="row" justifyContent="space-between">
+    <Flex flexDir="column">
+      <Text fontWeight="medium">Sell MILA</Text>
+      <Text
+        fontWeight="medium"
+        fontSize={"x-small"}
+        color="#9E6596"
+      >
+        Get USDT
+      </Text>
+    </Flex>
+
+    <Flex flexDir="row" align="center">
+      <Flex flexDir="column">
+        <Text
+          fontSize="xs"
+          fontWeight="bold"
+          mx="2"
+          align="end"
+          color="gray.500"
+        >
+          WBNB Bal:
+        </Text>
+        <Text
+          fontSize="xs"
+          fontWeight="bold"
+          mx="2"
+          align="end"
+        >
+          {/* {loadingUsdtPrice ? "Loading" : userBalance} */}
+        </Text>
+        <Text
+          fontSize="xs"
+          fontWeight="bold"
+          mx="2"
+          align="end"
+        >
+          {/* {loadingPrice? "Loading": "$"+tokenBalance} */}
+        </Text>
+      </Flex>
+      <Button
+        borderRadius="20px"
+        w="auto"
+        boxShadow="xl"
+        variant="outline"
+        fontSize="sm"
+        onClick={() => {
+          setSellBnbFromAmount(userBalance);
+        }}
+      >
+        max
+      </Button>
+    </Flex>
+  </Flex>
+
+  <Flex
+    flexDir="row"
+    p={6}
+    mt={4}
+    borderRadius="20px"
+    bgColor="gray.200"
+    align="center"
+    justify="space-between"
+  >
+    <Input
+      placeholder="0.0"
+      w="100%"
+      _hover={{
+        border: "0px",
+      }}
+      // onChange={handleSellBnbFromAmountChange}
+      // // value={fromAmount}
+      // value={sellBnbFromAmount ? sellBnbFromAmount : ""}
+    />
+  </Flex>
+  <Flex flexDir="row" justifyContent="flex-end">
+    <Text fontSize="xs" fontWeight="bold">
+      {/* {fromTokenPriceUsd} */}
+    </Text>
+  </Flex>
+
+  <Flex align="center" mt={3}>
+    <Divider />
+
+    <Divider />
+  </Flex>
+
+  <Flex
+    flexDir="column"
+    justifyContent="flex-end"
+    align={"flex-end"}
+  >
+    <Text fontSize="xs" fontWeight="bold">
+      BUSD Balance:{" "}
+    </Text>
+    <Text fontSize="xs" fontWeight="bold">
+      {/* {busdBal} */}
+    </Text>
+    {/* <Text fontSize="xs" fontWeight="bold" >{usdtBalance}</Text> */}
+  </Flex>
+  <Flex flexDir="row" w={"100%"} justifyContent="flex-end">
+    <Button
+      w={"50%"}
+      py={5}
+      borderRadius="15px"
+      bgColor="#dc35464b"
+      // isDisabled={sellButtonDisabled == true}
+      mt={5}
+      // onClick={() => swapBnbForUsdt()}
+      // isLoading={approveLoadingSell}
+      // disabled
+    >
+      Sell WBNB
+    </Button>
+  </Flex>
+</Flex>
+<Flex></Flex>
+</Box>
+<Box align={"center"}>
+<Skeleton isLoaded={1}>
+{/* <Skeleton isLoaded={!loadingSB}> */}
+  <Flex
+    bg="#f9f9f9"
+    p={4}
+    borderRadius="20px"
+    borderTopRadius="0px"
+    w={"90%"}
+    border="0px"
+    borderColor="#dc35464b"
+    boxShadow="xl"
+    color="gray.700"
+    justifyContent={"space-between"}
+  >
+    <Flex
+      flexDir="row"
+      justifyContent={"space-between"}
+      w={"100%"}
+    >
+      <Flex
+        flexDir="column"
+        justifyContent="flex-start"
+        align={"flex-start"}
+      >
+        <Text
+          fontSize="xs"
+          fontWeight="bold"
+          color="gray.500"
+        >
+          Spend BNB:{" "}
+        </Text>
+        <Text fontSize="xs" fontWeight="bold">
+          {/* {sellBnbFromAmount} */}
+        </Text>
+        {/* <Text fontSize="xs" fontWeight="bold" >{usdtBalance}</Text> */}
+      </Flex>
+      <Flex
+        flexDir="column"
+        justifyContent="flex-end"
+        align={"flex-end"}
+      >
+        <Text
+          fontSize="xs"
+          fontWeight="bold"
+          color="gray.500"
+        >
+          Get USDT:{" "}
+        </Text>
+        <Text fontSize="xs" fontWeight="bold">
+          {/* ~{sellBnbExpectedAmount} */}
+        </Text>
+        {/* <Text fontSize="xs" fontWeight="bold" >{usdtBalance}</Text> */}
+      </Flex>
+    </Flex>
+  </Flex>
+</Skeleton>
+</Box>
+</Flex>
+///////////////////////

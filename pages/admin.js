@@ -295,7 +295,7 @@ return(
                     <Icon as={FiBox} fontSize="2xl" display={["none", "none", "flex", "flex", "flex"]}/>
                     
                   </Link> 
-                  <Link href="/admin"    _hover={{ textDecor: "none" }}
+                  <Link href="/admin" _hover={{ textDecor: "none" }}
                     display={["flex", "flex", "none", "flex", "flex"]} >
                  <Text>Admin</Text>
 </Link>

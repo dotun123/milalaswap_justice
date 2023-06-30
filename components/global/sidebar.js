@@ -171,11 +171,11 @@ export const Sidebar = () => {
                   mr={[2, 6, 0, 0, 0]}
                   mb={[0, 0, 6, 6, 6]}
                 >
-                  <Link href="/admin" >
+                  <Link href="/admin"  >
                     <Icon as={FiBox} fontSize="2xl" display={["none", "none", "flex", "flex", "flex"]}/>
                     
                   </Link> 
-                  <Link href="/admin"    _hover={{ textDecor: "none" }}
+                  <Link href="/admin"  _hover={{ textDecor: "none" }}
                     display={["flex", "flex", "none", "flex", "flex"]} >
                  <Text>Admin</Text>
                 </Link>

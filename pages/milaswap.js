@@ -12,7 +12,7 @@ import {
   Skeleton,
   
 } from "@chakra-ui/react";
-import React, { useEffect, useMemo, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { FiChevronDown,FiChevronUp,FiCreditCard,} from "react-icons/fi";
 
 
@@ -20,10 +20,11 @@ import { contractABI,contractAddress,contractABI2,contractAddress2,contractABI3,
 
 
 
-import {ownerAddress} from "./abi/utils/constant";
+
 import { useAccount,useContractRead, useContractWrite, usePrepareContractWrite,useWaitForTransaction } from 'wagmi';
 import { ethers } from "ethers";
 import { Loading,NotConnected,ConnectButtonComp,Sidebar } from "../components/global";
+import Notification from "../components/global/Notification";
 
 
 export default function Dashboard() {
@@ -99,31 +100,11 @@ export default function Dashboard() {
   })
 
 
-useEffect(() => {
-    if (milaTotalSupply) {
-      let supply = milaTotalSupply;
-      setSupplyData(supply);
-      console.log("milaData:", supply);
-    }
-     if (totalMilaBalance) {
-      let bal = totalMilaBalance;
-      setMilaBalance(bal);
-    }
-      if (usdtTotalSupply) {
-    let total = usdtTotalSupply;
-    setUsdtSupply(total);
-  } 
-  // if (totalUsdtBalance) {
-    let bal2 = totalUsdtBalance;
-    setUsdtBalance(bal2);
-  // }
-  console.log("error: ", tokenId)
-  console.log("usdtBalance: ", totalUsdtBalance)
-  console.log("mila",milaData)
-  }, [milaTotalSupply, totalMilaBalance, usdtTotalSupply, totalUsdtBalance, isConnected, address ]);
-
+  
 
   
+
+
 
  const { config:milaApprove } = usePrepareContractWrite({
     address: contractAddress3,
@@ -167,10 +148,34 @@ const { isLoading:botLoading, isSuccess:botSuccess } = useWaitForTransaction({
   console.log("hash2:",botSuccess,botLoading);
   console.log("Loading:",appLoading,buyLoading);
  
+  useEffect(() => {
+    if (milaTotalSupply) {
+      let supply = milaTotalSupply;
+      setSupplyData(supply);
+      console.log("milaData:", supply);
+    }
+     if (totalMilaBalance) {
+      let bal = totalMilaBalance;
+      setMilaBalance(bal);
+    }
+      if (usdtTotalSupply) {
+    let total = usdtTotalSupply;
+    setUsdtSupply(total);
+  } 
+  // if (totalUsdtBalance) {
+    let bal2 = totalUsdtBalance;
+    setUsdtBalance(bal2);
+  // }
+  console.log("error: ", tokenId)
+  console.log("usdtBalance: ", totalUsdtBalance)
+  console.log("mila",milaData)
+  }, [milaTotalSupply, totalMilaBalance, usdtTotalSupply, totalUsdtBalance, isConnected, address,botSuccess]);
  
+  
 const Max=usdtBalance?.toString()/(milaData?milaData[3]:0).toString()
 const url="https://mumbai.polygonscan.com/address/" + (milaData ? milaData[0] : 0).toString();
 const url2="https://mumbai.polygonscan.com/address/" + (milaData ? milaData[1] : 0).toString();
+const transactionUrl="https://mumbai.polygonscan.com/tx/" + (buyData?.hash);
 
 function ethValue(weiValue){
   if (weiValue != undefined){
@@ -193,7 +198,7 @@ function weiValue(ethValue){
 
 
     return (
-      <Flex 
+      <Flex  
         h={[null, null, "100vh"]}
         flexDir={["column", "column", "row"]}
         overflow="hidden"
@@ -218,7 +223,9 @@ function weiValue(ethValue){
    overflow="auto"
    align="center"
  >
-  {(!isConnected)?<NotConnected/>:<ConnectButtonComp/>}
+  {botSuccess&&<Notification transactionUrl={transactionUrl}/>}
+
+  {(!isConnected)?<NotConnected/>:<ConnectButtonComp />}
   
    <Flex alignContent="center">
      
@@ -409,7 +416,7 @@ function weiValue(ethValue){
                           <Text fontWeight="bold" fontSize="xl">
                            
                           </Text>
-                          {ethValue((milaData?milaData[3]:0).toString())}
+                          {ethValue((milaData?milaData[3]:0).toString())}{" USDT"}
                         </Flex>
                         <Flex align="center">
                           <Icon mr={2} as={FiCreditCard} />
@@ -427,7 +434,7 @@ function weiValue(ethValue){
                      
                       </Flex>
                           <Text textTransform="uppercase" fontSize="xs">
-                             milaToken Fee:
+                             Transaction Fee:
                             
                             </Text>
                        {ethValue((milaData?milaData[4]:0).toString())}{" %"}
@@ -463,206 +470,13 @@ function weiValue(ethValue){
               bgColor="#F5F5F5"
               p="3%"
               flexDir={["column", "column", "row"]}
-              justifyContent="space-between"
+              justifyContent="center"
+             
             >
-              <Flex
-                borderRadius="3xl"
-                border="0px"
-                borderColor="gray.200"
-                minW={[null, null, "300px", "300px", "400px"]}
-                flexDir="column"
-              >
-                <Box
-                  bg="#ffffff"
-                  p={4}
-                  mt={8}
-                  borderRadius="20px"
-                  border="0px"
-                  borderColor="#dc35464b"
-                  boxShadow="xl"
-                  color="gray.700"
-                >
-                  <Flex flexDir="column">
-                    <Flex flexDir="row" justifyContent="space-between">
-                      <Flex flexDir="column">
-                        <Text fontWeight="medium">Sell MILA</Text>
-                        <Text
-                          fontWeight="medium"
-                          fontSize={"x-small"}
-                          color="#9E6596"
-                        >
-                          Get USDT
-                        </Text>
-                      </Flex>
-
-                      <Flex flexDir="row" align="center">
-                        <Flex flexDir="column">
-                          <Text
-                            fontSize="xs"
-                            fontWeight="bold"
-                            mx="2"
-                            align="end"
-                            color="gray.500"
-                          >
-                            WBNB Bal:
-                          </Text>
-                          <Text
-                            fontSize="xs"
-                            fontWeight="bold"
-                            mx="2"
-                            align="end"
-                          >
-                            {/* {loadingUsdtPrice ? "Loading" : userBalance} */}
-                          </Text>
-                          <Text
-                            fontSize="xs"
-                            fontWeight="bold"
-                            mx="2"
-                            align="end"
-                          >
-                            {/* {loadingPrice? "Loading": "$"+tokenBalance} */}
-                          </Text>
-                        </Flex>
-                        <Button
-                          borderRadius="20px"
-                          w="auto"
-                          boxShadow="xl"
-                          variant="outline"
-                          fontSize="sm"
-                          onClick={() => {
-                            setSellBnbFromAmount(userBalance);
-                          }}
-                        >
-                          max
-                        </Button>
-                      </Flex>
-                    </Flex>
-
-                    <Flex
-                      flexDir="row"
-                      p={6}
-                      mt={4}
-                      borderRadius="20px"
-                      bgColor="gray.200"
-                      align="center"
-                      justify="space-between"
-                    >
-                      <Input
-                        placeholder="0.0"
-                        w="100%"
-                        _hover={{
-                          border: "0px",
-                        }}
-                        // onChange={handleSellBnbFromAmountChange}
-                        // // value={fromAmount}
-                        // value={sellBnbFromAmount ? sellBnbFromAmount : ""}
-                      />
-                    </Flex>
-                    <Flex flexDir="row" justifyContent="flex-end">
-                      <Text fontSize="xs" fontWeight="bold">
-                        {/* {fromTokenPriceUsd} */}
-                      </Text>
-                    </Flex>
-
-                    <Flex align="center" mt={3}>
-                      <Divider />
-
-                      <Divider />
-                    </Flex>
-
-                    <Flex
-                      flexDir="column"
-                      justifyContent="flex-end"
-                      align={"flex-end"}
-                    >
-                      <Text fontSize="xs" fontWeight="bold">
-                        BUSD Balance:{" "}
-                      </Text>
-                      <Text fontSize="xs" fontWeight="bold">
-                        {/* {busdBal} */}
-                      </Text>
-                      {/* <Text fontSize="xs" fontWeight="bold" >{usdtBalance}</Text> */}
-                    </Flex>
-                    <Flex flexDir="row" w={"100%"} justifyContent="flex-end">
-                      <Button
-                        w={"50%"}
-                        py={5}
-                        borderRadius="15px"
-                        bgColor="#dc35464b"
-                        // isDisabled={sellButtonDisabled == true}
-                        mt={5}
-                        // onClick={() => swapBnbForUsdt()}
-                        // isLoading={approveLoadingSell}
-                        // disabled
-                      >
-                        Sell WBNB
-                      </Button>
-                    </Flex>
-                  </Flex>
-                  <Flex></Flex>
-                </Box>
-                <Box align={"center"}>
-                  <Skeleton isLoaded={1}>
-                  {/* <Skeleton isLoaded={!loadingSB}> */}
-                    <Flex
-                      bg="#f9f9f9"
-                      p={4}
-                      borderRadius="20px"
-                      borderTopRadius="0px"
-                      w={"90%"}
-                      border="0px"
-                      borderColor="#dc35464b"
-                      boxShadow="xl"
-                      color="gray.700"
-                      justifyContent={"space-between"}
-                    >
-                      <Flex
-                        flexDir="row"
-                        justifyContent={"space-between"}
-                        w={"100%"}
-                      >
-                        <Flex
-                          flexDir="column"
-                          justifyContent="flex-start"
-                          align={"flex-start"}
-                        >
-                          <Text
-                            fontSize="xs"
-                            fontWeight="bold"
-                            color="gray.500"
-                          >
-                            Spend BNB:{" "}
-                          </Text>
-                          <Text fontSize="xs" fontWeight="bold">
-                            {/* {sellBnbFromAmount} */}
-                          </Text>
-                          {/* <Text fontSize="xs" fontWeight="bold" >{usdtBalance}</Text> */}
-                        </Flex>
-                        <Flex
-                          flexDir="column"
-                          justifyContent="flex-end"
-                          align={"flex-end"}
-                        >
-                          <Text
-                            fontSize="xs"
-                            fontWeight="bold"
-                            color="gray.500"
-                          >
-                            Get USDT:{" "}
-                          </Text>
-                          <Text fontSize="xs" fontWeight="bold">
-                            {/* ~{sellBnbExpectedAmount} */}
-                          </Text>
-                          {/* <Text fontSize="xs" fontWeight="bold" >{usdtBalance}</Text> */}
-                        </Flex>
-                      </Flex>
-                    </Flex>
-                  </Skeleton>
-                </Box>
-              </Flex>
+             
               <Flex
                 minW={[null, null, "300px", "300px", "400px"]}
-                flexDir="column"
+                flexDir="column" 
               >
                 <Box
                   bg="#ffffff"
