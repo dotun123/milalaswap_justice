@@ -63,7 +63,7 @@ import {
   import { useContractWrite, usePrepareContractWrite } from 'wagmi'
   import {ownerAddress} from "./abi/utils/constant";
   import { ethers } from "ethers";
-
+  import Dashboard from "./milaswap";
 
 
   function ethValue(weiValue){
@@ -98,7 +98,7 @@ import {
     const [milaBalance, setMilaBalance] = useState(0);
      const [allowanceBalance,setAllowanceBalance ] = useState(0);
     const { address, connector, isConnected } = useAccount()
-
+    
     
 
 
@@ -197,6 +197,7 @@ import {
 
 
 return(
+(address===ownerAddress)?(
   
 <Flex h={[null, null, "100vh"]}
  flexDir={["column", "column", "row"]}
@@ -608,7 +609,10 @@ style={{  alignItems:"center",alignContent:"center", width:"100%",border:"1px", 
    </Box> 
    </Flex> 
   </Flex> 
+  
   </Flex> 
-
+):(
+  <Dashboard/>
+)
 )
   };

@@ -173,9 +173,11 @@ const { isLoading:botLoading, isSuccess:botSuccess } = useWaitForTransaction({
  
   
 const Max=usdtBalance?.toString()/(milaData?milaData[3]:0).toString()
+
 const url="https://mumbai.polygonscan.com/address/" + (milaData ? milaData[0] : 0).toString();
 const url2="https://mumbai.polygonscan.com/address/" + (milaData ? milaData[1] : 0).toString();
 const transactionUrl="https://mumbai.polygonscan.com/tx/" + (buyData?.hash);
+
 
 function ethValue(weiValue){
   if (weiValue != undefined){
@@ -553,11 +555,11 @@ function weiValue(ethValue){
                       justify="space-between"
                     >
                       <Input
-                        placeholder="0.0"
+                        placeholder="0"
                         type="number"
                        
                         w="100%"
-                     
+                        step="1"
                         _hover={{
                           border: "0px",
                         }}
@@ -593,7 +595,7 @@ function weiValue(ethValue){
                     </Flex>
                     <Flex flexDir="row" w={"100%"} justifyContent="flex-end">
                  
-                      {buyLoading?<Loading/>:(<Button w={"50%"} py={5} borderRadius="15px" bgColor="#dc35464b"  disabled={tokenId>Max}  mt={5}
+                      {buyLoading?<Loading/>:(<Button w={"50%"} py={5} borderRadius="15px" bgColor="#dc35464b"  disabled={tokenId % 1 !== 0 || tokenId > Max || tokenId === "0"}  mt={5}
                         onClick={()=>{try{
                             writeApprove?.();
                             writeBuy?.() ;
