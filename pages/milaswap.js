@@ -141,19 +141,18 @@ const { config:milaBuy } = usePrepareContractWrite({
 
 const { data:buyData , isLoading:buyLoading, write:writeBuy} = useContractWrite(milaBuy)
 
-const { isLoading:botLoading, isSuccess:botSuccess,isFetching,isFetched} = useWaitForTransaction({
-   confirmations: 1,
+const { isLoading:botLoading, isSuccess:botSuccess } = useWaitForTransaction({
     hash: buyData?.hash,
   })
 
   console.log("hash2:",botSuccess,botLoading);
   console.log("Loading:",appLoading,buyLoading);
-  console.log("Loading2:",isFetched,isFetching);
+ 
   useEffect(() => {
     if (milaTotalSupply) {
       let supply = milaTotalSupply;
       setSupplyData(supply);
-      
+      console.log("milaData:", supply);
     }
      if (totalMilaBalance) {
       let bal = totalMilaBalance;
@@ -163,14 +162,15 @@ const { isLoading:botLoading, isSuccess:botSuccess,isFetching,isFetched} = useWa
     let total = usdtTotalSupply;
     setUsdtSupply(total);
   } 
-   if (totalUsdtBalance) {
+  // if (totalUsdtBalance) {
     let bal2 = totalUsdtBalance;
     setUsdtBalance(bal2);
-   }}, [isConnected,totalMilaBalance,totalUsdtBalance,milaTotalSupply,usdtTotalSupply,botSuccess,isFetched ]);
+  // }
+  console.log("error: ", tokenId)
+  console.log("usdtBalance: ", totalUsdtBalance)
+  console.log("mila",milaData)
+  }, [milaTotalSupply, totalMilaBalance, usdtTotalSupply, totalUsdtBalance, isConnected, address,botSuccess]);
  
-
-
-  
   
 const Max=usdtBalance?.toString()/(milaData?milaData[3]:0).toString()
 
@@ -255,6 +255,10 @@ function weiValue(ethValue){
             align="center"
           >
 
+
+            <Flex alignContent="center">
+            
+            </Flex>
             <Flex
               w={["100%", "100%", "100%","100%","100%"]}
               minW={[null, null, "300px", "300px", "900px"]}
@@ -591,8 +595,7 @@ function weiValue(ethValue){
                     </Flex>
                     <Flex flexDir="row" w={"100%"} justifyContent="flex-end">
                  
-                      {(buyLoading || botLoading||isFetching)?<Loading/>:(<Button w={"50%"} py={5} 
-                      borderRadius="15px" bgColor="#dc35464b"  disabled={tokenId % 1 !== 0 || tokenId > Max || tokenId === "0"}  mt={5}
+                      {buyLoading?<Loading/>:(<Button w={"50%"} py={5} borderRadius="15px" bgColor="#dc35464b"  disabled={tokenId % 1 !== 0 || tokenId > Max || tokenId === "0"}  mt={5}
                         onClick={()=>{try{
                             writeApprove?.();
                             writeBuy?.() ;
