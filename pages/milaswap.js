@@ -68,13 +68,25 @@ export default function Dashboard() {
     abi: contractABI,
     functionName: "balanceOf",
     args:[address],
+    watch: true,
      })
 
+
+
+     const { data: totalUsdtBalance, error: usdtTotalError } = useContractRead({
+      address:contractAddress3,
+      abi: contractABI3,
+      functionName: "balanceOf",
+      args:[address],
+      watch: true,
+    })
+  
 
   const { data: milaTotalSupply, error: totalSupplyError } = useContractRead({
     address:contractAddress,
     abi: contractABI,
     functionName: "totalSupply",
+    watch: true,
 
   })
   
@@ -82,23 +94,19 @@ export default function Dashboard() {
     address:contractAddress2,
     abi: contractABI2,
     functionName: "sysVars",
+    watch: true,
 
   })
   const { data: usdtTotalSupply, error: usdttotalSupplyError } = useContractRead({
   address:contractAddress3,
   abi: contractABI3,
   functionName: "totalSupply",
+  watch: true,
   })
 
 
 
-  const { data: totalUsdtBalance, error: usdtTotalError } = useContractRead({
-    address:contractAddress3,
-    abi: contractABI3,
-    functionName: "balanceOf",
-      args:[address],
-  })
-
+ 
 
   
 
@@ -113,6 +121,7 @@ export default function Dashboard() {
     args:[contractAddress2,weiValue(tokenId)],
     gas: 1_000_000n,
     
+
     onSuccess(writeApprove){
   console.log("sucess:",writeApprove)
     },
@@ -127,19 +136,19 @@ const { data:approveData ,isLoading:appLoading, write:writeApprove } = useContra
   console.log("hash:",waitSuccess,waitLoading)
 
 
-const { config:milaBuy } = usePrepareContractWrite({
+  const { data:buyData , isLoading:buyLoading, write:writeBuy} = useContractWrite({
   address: contractAddress2,
   abi: contractABI2,
   functionName: 'buyMila',
   args:[(tokenId)],
   gas: 1_000_000n,
+  
 
   onSuccess(writeBuy){
    console.log("sucess:",writeBuy)
  },
 })
 
-const { data:buyData , isLoading:buyLoading, write:writeBuy} = useContractWrite(milaBuy)
 
 const { isLoading:botLoading, isSuccess:botSuccess,isFetching,isFetched} = useWaitForTransaction({
    confirmations: 1,
@@ -166,7 +175,7 @@ const { isLoading:botLoading, isSuccess:botSuccess,isFetching,isFetched} = useWa
    if (totalUsdtBalance) {
     let bal2 = totalUsdtBalance;
     setUsdtBalance(bal2);
-   }}, [isConnected,totalMilaBalance,totalUsdtBalance,milaTotalSupply,usdtTotalSupply,botSuccess,isFetched ]);
+   }}, [isConnected,totalMilaBalance,totalUsdtBalance,milaTotalSupply,usdtTotalSupply,address ]);
  
 
 
@@ -591,7 +600,7 @@ function weiValue(ethValue){
                     </Flex>
                     <Flex flexDir="row" w={"100%"} justifyContent="flex-end">
                  
-                      {(buyLoading || botLoading||isFetching)?<Loading/>:(<Button w={"50%"} py={5} 
+                      {(appLoading || buyLoading || botLoading||isFetching)?<Loading/>:(<Button w={"50%"} py={5} 
                       borderRadius="15px" bgColor="#dc35464b"  disabled={tokenId % 1 !== 0 || tokenId > Max || tokenId === "0"}  mt={5}
                         onClick={()=>{try{
                             writeApprove?.();

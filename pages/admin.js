@@ -103,10 +103,11 @@ import {
 
 
     const { data: milaAllowance, error: allowanceError } = useContractRead({
-      address:contractAddress,
-      abi: contractABI,
+      address:contractAddress3,
+      abi: contractABI3,
        functionName: "allowance",
-       args:[ownerAddress,address]
+       args:[address,contractAddress2],
+       watch: true,
        })
   
 
@@ -137,6 +138,7 @@ import {
        abi: contractABI,
      functionName: "balanceOf",
          args:[ownerAddress],
+         watch: true,
      })
   
     useEffect(() => {
@@ -162,7 +164,7 @@ import {
        address: contractAddress,
        abi: contractABI,
       functionName: 'increaseAllowance',
-       args:[address,weiValue(allowValue)]
+       args:[contractAddress2,weiValue(allowValue)]
      })
      const { data:allowanceData,  isSuccess, write:writeAllowance } = useContractWrite(allowanceIncrease)
     
