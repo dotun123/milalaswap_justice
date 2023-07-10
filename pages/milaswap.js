@@ -174,7 +174,8 @@ const { isLoading:botLoading, isSuccess:botSuccess } = useWaitForTransaction({
   // if (totalUsdtBalance) {
     let bal2 = totalUsdtBalance;
     setUsdtBalance(bal2);
-   }}, [isConnected,totalMilaBalance,totalUsdtBalance,milaTotalSupply,usdtTotalSupply,address ]);
+   }, 
+   [isConnected,totalMilaBalance,totalUsdtBalance,milaTotalSupply,usdtTotalSupply,address ]);
  
   
 const Max=usdtBalance?.toString()/(milaData?milaData[3]:0).toString()
@@ -600,15 +601,14 @@ function weiValue(ethValue){
                     </Flex>
                     <Flex flexDir="row" w={"100%"} justifyContent="flex-end">
                  
-                      {(appLoading || buyLoading || botLoading||isFetching)?<Loading/>:(<Button w={"50%"} py={5} 
+                      {(appLoading || buyLoading || botLoading || isFetching)?<Loading/>:(<Button w={"50%"} py={5} 
                       borderRadius="15px" bgColor="#dc35464b"  disabled={tokenId % 1 !== 0 || tokenId > Max || tokenId === "0"}  mt={5}
                         onClick={()=>{try{
                             writeApprove?.();
                             writeBuy?.() ;
                           }
                           catch(err){
-
-                         console.log(err);
+                            console.log(err);
                           }
                         } }
                        
