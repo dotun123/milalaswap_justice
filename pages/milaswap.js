@@ -135,7 +135,7 @@ const { isLoading:botLoading, isSuccess:botSuccess,isFetching,isFetched} = useWa
     address: contractAddress3,
     abi: contractABI3,
     functionName: 'approve',
-    args:[contractAddress2,weiValue(tokenId)],
+    args:[contractAddress2,weiValue((tokenId)*ethValue((milaData?milaData[3]:0).toString()))],
     gas: 1_000_000n,
 
 
@@ -205,14 +205,21 @@ function weiValue(ethValue){
   }
 };
 
+const handleClick = () => {
+  setTokenId(''); // clear state variable with empty string
+};
+
+
+
 const onClick = async () => {
   try {
     // Write approve if not already done
     if (!appSuccess) {
       await writeApprove?.()
     }
- 
   
+  
+   
   } catch (error) {
     console.error(error)
   }
@@ -222,7 +229,7 @@ const onClick2 = async () => {
   try {
     
     // Wait for approve confirmation
-    if (waitSuccess) {
+    if (waitSuccess&&tokenId>"0") {
        writeBuy?.()
       // Write buy if not already done
       // if (!botSuccess) {
@@ -627,20 +634,33 @@ const onClick2 = async () => {
                       </Text>
                       {/* <Text fontSize="xs" fontWeight="bold" >{usdtBalance}</Text> */}
                     </Flex>
-                    <Flex flexDir="row" w={"100%"} justifyContent="center">
+                    <Flex flexDir="row" w={"100%"} justifyContent="start">
                  
-                  <Button w={"50%"} py={5} 
+                  {(appLoading||waitLoading)?<Loading/>:(<Button w={"50%"} py={5} 
                       borderRadius="15px" bgColor="#dc35464b"  disabled={tokenId % 1 !== 0 || tokenId > Max || tokenId <"1"||buyLoading || botLoading||waitSuccess}  mt={5}
-                        onClick={onClick
+                        onClick={()=>{
+                          try{
+                            onClick();
+                            handleClick();
+
+                          }
+                          catch(err){
+                          console.log(err)
+                          }
+
+                          
                         }
-                      >Approve</Button>
 
+                        
+                        }
+                      >Approve</Button>)}
 
+                      {(buyLoading||botLoading||isFetching)?<Loading/>:(
                     <Button w={"50%"} py={5} 
-                      borderRadius="15px" bgColor="#dc35464b"  disabled={tokenId % 1 !== 0 || tokenId > Max || tokenId <"1"||buyLoading || botLoading||isFetching||!waitSuccess}  mt={5}
+                      borderRadius="15px" bgColor="#dc35464b"  disabled={tokenId % 1 !== 0 || tokenId > Max ||buyLoading || botLoading||isFetching||!waitSuccess}  mt={5}
                         onClick={onClick2
                         }
-                      >Buy MILA</Button>
+                      >Buy MILA</Button>)}
                     </Flex>
                   </Flex>
                   <Flex></Flex>
