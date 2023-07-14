@@ -110,7 +110,24 @@ export default function Dashboard() {
 
   
 
-  
+   const { config:milaBuy } = usePrepareContractWrite({
+  address: contractAddress2,
+  abi: contractABI2,
+  functionName: 'buyMila',
+  args:[(tokenId)],
+  gas: 1_000_000n,
+
+
+  onSuccess(writeBuy){
+   console.log("sucess:",writeBuy)
+ },
+})
+const { data:buyData , isLoading:buyLoading, write:writeBuy} = useContractWrite(milaBuy)
+
+const { isLoading:botLoading, isSuccess:botSuccess,isFetching,isFetched} = useWaitForTransaction({
+   confirmations: 1,
+    hash: buyData?.hash,
+  })
 
 
 
@@ -120,39 +137,25 @@ export default function Dashboard() {
     functionName: 'approve',
     args:[contractAddress2,weiValue(tokenId)],
     gas: 1_000_000n,
-    
 
-    onSuccess(writeApprove){
-  console.log("sucess:",writeApprove)
+
+    onSuccess(appSuccess){
+  console.log("sucess:",appSuccess);
+
     },
   })
  
-const { data:approveData ,isLoading:appLoading, write:writeApprove } = useContractWrite(milaApprove)
+const { data:approveData ,isLoading:appLoading,isSuccess:appSuccess, write:writeApprove } = useContractWrite(milaApprove)
 
   const { isLoading:waitLoading, isSuccess:waitSuccess } = useWaitForTransaction({
+    confirmations: 1,
     hash: approveData?.hash,
   })
 
   console.log("hash:",waitSuccess,waitLoading)
 
 
-  const { data:buyData , isLoading:buyLoading, write:writeBuy} = useContractWrite({
-  address: contractAddress2,
-  abi: contractABI2,
-  functionName: 'buyMila',
-  args:[(tokenId)],
-  gas: 1_000_000n,
-  
-
-  onSuccess(writeBuy){
-   console.log("sucess:",writeBuy)
- },
-})
-
-
-const { isLoading:botLoading, isSuccess:botSuccess } = useWaitForTransaction({
-    hash: buyData?.hash,
-  })
+ 
 
   console.log("hash2:",botSuccess,botLoading);
   console.log("Loading:",appLoading,buyLoading);
@@ -200,7 +203,34 @@ function weiValue(ethValue){
   }
 };
 
+const onClick = async () => {
+  try {
+    // Write approve if not already done
+    if (!appSuccess) {
+      await writeApprove?.()
+    }
+ 
+  
+  } catch (error) {
+    console.error(error)
+  }
+}
 
+const onClick2 = async () => {
+  try {
+    
+    // Wait for approve confirmation
+    if (waitSuccess) {
+       writeBuy?.()
+      // Write buy if not already done
+      // if (!botSuccess) {
+        
+      // }
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
 
 
 
@@ -599,21 +629,20 @@ function weiValue(ethValue){
                       </Text>
                       {/* <Text fontSize="xs" fontWeight="bold" >{usdtBalance}</Text> */}
                     </Flex>
-                    <Flex flexDir="row" w={"100%"} justifyContent="flex-end">
+                    <Flex flexDir="row" w={"100%"} justifyContent="center">
                  
-                      {(appLoading || buyLoading || botLoading || isFetching)?<Loading/>:(<Button w={"50%"} py={5} 
-                      borderRadius="15px" bgColor="#dc35464b"  disabled={tokenId % 1 !== 0 || tokenId > Max || tokenId === "0"}  mt={5}
-                        onClick={()=>{try{
-                            writeApprove?.();
-                            writeBuy?.() ;
-                          }
-                          catch(err){
-                            console.log(err);
-                          }
-                        } }
-                       
-                      >Buy MILA</Button>)}
-                      
+                  <Button w={"50%"} py={5} 
+                      borderRadius="15px" bgColor="#dc35464b"  disabled={tokenId % 1 !== 0 || tokenId > Max || tokenId <"1"||buyLoading || botLoading||waitSuccess}  mt={5}
+                        onClick={onClick
+                        }
+                      >Approve</Button>
+
+
+                    <Button w={"50%"} py={5} 
+                      borderRadius="15px" bgColor="#dc35464b"  disabled={tokenId % 1 !== 0 || tokenId > Max || tokenId <"1"||buyLoading || botLoading||isFetching||!waitSuccess}  mt={5}
+                        onClick={onClick2
+                        }
+                      >Buy MILA</Button>
                     </Flex>
                   </Flex>
                   <Flex></Flex>
