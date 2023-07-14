@@ -258,11 +258,6 @@ const handleClick2 = () => {
 }
 
 
-
-
-
-
-
     return (
       <Flex  
         h={[null, null, "100vh"]}
