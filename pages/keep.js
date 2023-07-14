@@ -672,3 +672,124 @@ color="gray.700"
 </Box>
 </Flex>
 ///////////////////////
+
+
+
+// making two separate buttons for approve and swapping//
+{/*                  
+
+                  {(appLoading||waitLoading)?<Loading/>:(<Button w={"50%"} py={5} 
+                      borderRadius="15px" bgColor="#dc35464b"  disabled={tokenId % 1 !== 0 || tokenId > Max || tokenId <"1"||buyLoading || botLoading||waitSuccess}  mt={5}
+                        onClick={()=>{
+                          try{
+                            onClick();
+                            handleClick();
+
+                          }
+                          catch(err){
+                          console.log(err)
+                          }
+
+                          
+                        }
+
+                        
+                        }
+                      >Approve</Button>)}
+
+                      {(buyLoading||botLoading||isFetching)?<Loading/>:(
+                    <Button w={"50%"} py={5} 
+                      borderRadius="15px" bgColor="#dc35464b"  disabled={tokenId % 1 !== 0 || tokenId > Max ||buyLoading || botLoading||isFetching||!waitSuccess}  mt={5}
+                        onClick={onClick2
+                        }
+                      >Buy MILA</Button>)} */}
+
+                      // const handleClick = () => {
+//   setTokenId(''); // clear state variable with empty string
+// };
+
+// const onClick = async () => {
+//   try {
+//     // Write approve if not already done
+//     if (!appSuccess) {
+//       await writeApprove?.()
+//     }
+  
+    
+   
+//   } catch (error) {
+//     console.error(error)
+//   }
+// }
+
+// const onClick2 = async () => {
+//   try {
+    
+//     // Wait for approve confirmation
+//     if (waitSuccess&&tokenId>"0") {
+//        writeBuy?.()
+//       // Write buy if not already done
+//       // if (!botSuccess) {
+        
+//       // }
+//     }
+//   } catch (error) {
+//     console.error(error)
+//   }
+// }
+
+//using prepareContract before writing to the contract//
+
+
+
+
+
+
+//    const { config:milaBuy } = usePrepareContractWrite({
+//   address: contractAddress2,
+//   abi: contractABI2,
+//   functionName: 'buyMila',
+//   args:[(tokenId)],
+//   gas: 1_000_000n,
+
+
+//   onSuccess(writeBuy){
+//    console.log("sucess:",writeBuy)
+//  },
+// })
+// const { data:buyData , isLoading:buyLoading, write:writeBuy} = useContractWrite(milaBuy)
+
+// const { isLoading:botLoading, isSuccess:botSuccess,isFetching,isFetched} = useWaitForTransaction({
+//    confirmations: 1,
+//     hash: buyData?.hash,
+//   })
+
+
+
+
+
+//  const { config:milaApprove } = usePrepareContractWrite({
+//     address: contractAddress3,
+//     abi: contractABI3,
+//     functionName: 'approve',
+//     args:[contractAddress2,weiValue((tokenId)*ethValue((milaData?milaData[3]:0).toString()))],
+//     gas: 1_000_000n,
+
+
+//     onSuccess(appSuccess){
+//   console.log("sucess:",appSuccess);
+
+//     },
+//   })
+ 
+// const { data:approveData ,isLoading:appLoading,isSuccess:appSuccess, write:writeApprove } = useContractWrite(milaApprove)
+
+//   const { isLoading:waitLoading, isSuccess:waitSuccess } = useWaitForTransaction({
+//     confirmations: 1,
+//     hash: approveData?.hash,
+//   })
+
+//   console.log("hash:",waitSuccess,waitLoading)
+
+
+// bgGradient="linear(to-t, #B57295, #29259A)"
