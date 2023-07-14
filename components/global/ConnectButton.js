@@ -3,7 +3,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 export const ConnectButtonComp = () => {
   return (
   
-    <ConnectButton.Custom>
+    <ConnectButton.Custom >
       {({
         account,
         chain,
@@ -59,7 +59,7 @@ style={{  alignItems:"center",alignContent:"center", width:"450px",border:"1px",
 
               return (
                
-                <div style={{ display: 'flex', gap: 12 }}>
+                <div style={{ display: 'flex', gap: 12 }} >
                   <button
                     onClick={openChainModal}
                     style={{ display: 'flex', alignItems: 'center' }}

@@ -23,9 +23,9 @@ import { contractABI,contractAddress,contractABI2,contractAddress2,contractABI3,
 
 import { useAccount,useContractRead, useContractWrite, usePrepareContractWrite,useWaitForTransaction } from 'wagmi';
 import { ethers } from "ethers";
-import { Loading,NotConnected,ConnectButtonComp,Sidebar } from "../components/global";
-import Notification from "../components/global/Notification";
+import { Loading,NotConnected,ConnectButtonComp,Sidebar,FailedNotification,Notification } from "../components/global";
 
+import { useDebounce } from 'use-debounce'
 
 export default function Dashboard() {
   const [display, changeDisplay] = useState("hide");
@@ -61,7 +61,11 @@ export default function Dashboard() {
   const [usdtBalance, setUsdtBalance] = useState(0);
   const [usdtData, setUsdtSupply] = useState(0);
   const [tokenId, setTokenId] = useState("");
+  const debouncedTokenId = useDebounce(tokenId)
   const { address,  isConnected } = useAccount()
+
+
+
 
   const { data: totalMilaBalance, error: totalError } = useContractRead({
     address:contractAddress,
@@ -110,56 +114,57 @@ export default function Dashboard() {
 
   
 
-   const { config:milaBuy } = usePrepareContractWrite({
-  address: contractAddress2,
-  abi: contractABI2,
-  functionName: 'buyMila',
-  args:[(tokenId)],
-  gas: 1_000_000n,
 
 
-  onSuccess(writeBuy){
-   console.log("sucess:",writeBuy)
- },
-})
-const { data:buyData , isLoading:buyLoading, write:writeBuy} = useContractWrite(milaBuy)
-
-const { isLoading:botLoading, isSuccess:botSuccess,isFetching,isFetched} = useWaitForTransaction({
-   confirmations: 1,
-    hash: buyData?.hash,
-  })
-
-
-
- const { config:milaApprove } = usePrepareContractWrite({
-    address: contractAddress3,
-    abi: contractABI3,
-    functionName: 'approve',
-    args:[contractAddress2,weiValue((tokenId)*ethValue((milaData?milaData[3]:0).toString()))],
-    gas: 1_000_000n,
-
-
-    onSuccess(appSuccess){
-  console.log("sucess:",appSuccess);
-
-    },
-  })
- 
-const { data:approveData ,isLoading:appLoading,isSuccess:appSuccess, write:writeApprove } = useContractWrite(milaApprove)
-
-  const { isLoading:waitLoading, isSuccess:waitSuccess } = useWaitForTransaction({
-    confirmations: 1,
-    hash: approveData?.hash,
-  })
-
-  console.log("hash:",waitSuccess,waitLoading)
 
 
  
+  const { data:buyData , isLoading:buyLoading,isError:writeError,isIdle, write:writeBuy} = useContractWrite({
+    address: contractAddress2,
+    abi: contractABI2,
+    functionName: 'buyMila',
+    args: [parseInt(debouncedTokenId)],
+    enabled: Boolean(debouncedTokenId),
+  
+  
+  })
 
-  console.log("hash2:",botSuccess,botLoading);
-  console.log("Loading:",appLoading,buyLoading);
-  console.log("Loading2:",isFetched,isFetching);
+  const { isLoading:botLoading,isError:botError, isSuccess:botSuccess,isFetching} = useWaitForTransaction({
+     confirmations: 1,
+      hash: buyData?.hash,
+    })
+
+console.log("error:",botError)
+console.log("error2:",writeError)
+console.log("error3:",isIdle)
+
+const { config:milaApprove } = usePrepareContractWrite({
+      address: contractAddress3,
+      abi: contractABI3,
+      functionName: 'approve',
+      args:[contractAddress2,weiValue((tokenId)*ethValue((milaData?milaData[3]:0).toString()))],
+    
+  
+  
+      onSuccess(appSuccess){
+    console.log("sucess:",appSuccess);
+  
+      },
+    })
+   
+  const { data:approveData ,isLoading:appLoading,isSuccess:appSuccess, write:writeApprove } = useContractWrite(milaApprove)
+  
+    const { isLoading:waitLoading, isSuccess:waitSuccess } = useWaitForTransaction({
+      confirmations:1,
+      hash: approveData?.hash,
+    })
+  
+    console.log("hash:",waitSuccess,waitLoading)
+
+
+
+
+ 
   useEffect(() => {
     if (milaTotalSupply) {
       let supply = milaTotalSupply;
@@ -177,9 +182,19 @@ const { data:approveData ,isLoading:appLoading,isSuccess:appSuccess, write:write
    if (totalUsdtBalance) {
     let bal2 = totalUsdtBalance;
     setUsdtBalance(bal2);
-   }}, [isConnected,totalMilaBalance,totalUsdtBalance,milaTotalSupply,usdtTotalSupply,address ]);
+   }}, [isConnected,totalMilaBalance,totalUsdtBalance,milaTotalSupply,usdtTotalSupply,address]);
  
 
+   useEffect(() => {
+    // Run milaBuy whenever count changes
+    if (!buyLoading) {
+      writeBuy?.()
+            }
+            else{
+              console.log("not loading")
+            }
+    
+    }, [waitSuccess,isConnected,address]);
 
   
   
@@ -205,41 +220,18 @@ function weiValue(ethValue){
   }
 };
 
-const handleClick = () => {
-  setTokenId(''); // clear state variable with empty string
-};
 
 
 
-const onClick = async () => {
-  try {
-    // Write approve if not already done
-    if (!appSuccess) {
-      await writeApprove?.()
-    }
-  
-  
-   
-  } catch (error) {
-    console.error(error)
-  }
+const handleClick2 = () => {
+
+   writeApprove?.()
+
+
 }
 
-const onClick2 = async () => {
-  try {
-    
-    // Wait for approve confirmation
-    if (waitSuccess&&tokenId>"0") {
-       writeBuy?.()
-      // Write buy if not already done
-      // if (!botSuccess) {
-        
-      // }
-    }
-  } catch (error) {
-    console.error(error)
-  }
-}
+
+
 
 
 
@@ -271,7 +263,7 @@ const onClick2 = async () => {
    align="center"
  >
   {botSuccess&&<Notification transactionUrl={transactionUrl}/>}
-
+{(botError)&&<FailedNotification transactionUrl={transactionUrl}/>}
   {(!isConnected)?<NotConnected/>:<ConnectButtonComp />}
   
    <Flex alignContent="center">
@@ -634,32 +626,14 @@ const onClick2 = async () => {
                       </Text>
                       {/* <Text fontSize="xs" fontWeight="bold" >{usdtBalance}</Text> */}
                     </Flex>
-                    <Flex flexDir="row" w={"100%"} justifyContent="start">
-                 
-                  {(appLoading||waitLoading)?<Loading/>:(<Button w={"50%"} py={5} 
-                      borderRadius="15px" bgColor="#dc35464b"  disabled={tokenId % 1 !== 0 || tokenId > Max || tokenId <"1"||buyLoading || botLoading||waitSuccess}  mt={5}
-                        onClick={()=>{
-                          try{
-                            onClick();
-                            handleClick();
+                    <Flex flexDir="row" w={"100%"} justifyContent="center">
 
-                          }
-                          catch(err){
-                          console.log(err)
-                          }
 
                           
-                        }
-
+                  {(waitSuccess&&buyLoading||botLoading||isFetching||appLoading||waitLoading)?<Loading/>:(<Button w={"50%"} py={5} 
+                      borderRadius="15px" bgColor="#dc35464b"  disabled={tokenId % 1 !== 0 || tokenId > Max || tokenId <"1"}  mt={5}
+                        onClick={handleClick2}
                         
-                        }
-                      >Approve</Button>)}
-
-                      {(buyLoading||botLoading||isFetching)?<Loading/>:(
-                    <Button w={"50%"} py={5} 
-                      borderRadius="15px" bgColor="#dc35464b"  disabled={tokenId % 1 !== 0 || tokenId > Max ||buyLoading || botLoading||isFetching||!waitSuccess}  mt={5}
-                        onClick={onClick2
-                        }
                       >Buy MILA</Button>)}
                     </Flex>
                   </Flex>

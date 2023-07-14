@@ -19,7 +19,7 @@ import {
     color,
     useDisclosure,
   } from "@chakra-ui/react";
-const Notification = ({transactionUrl}) => {
+const FailedNotification = ({transactionUrl}) => {
   const {
     isOpen: isVisible,
     onClose
@@ -27,10 +27,10 @@ const Notification = ({transactionUrl}) => {
 
   return isVisible ? (
     
-    <Alert status="success" position="absolute"   variant="solid"  fontWeight={"500"}  height={"200px"} w={"50%"} zIndex={"99"}  flexDir={["column", "column", "row"]} >
-    <AlertIcon />
-    <AlertTitle mr={2}>Transaction successful!</AlertTitle>
-    <AlertDescription>Your payment has been processed.</AlertDescription>
+    <Alert status="error" position="absolute"   variant="solid"  fontWeight={"500"}  height={"200px"} w={"50%"} zIndex={"99"}  flexDir={["column", "column", "row"]} >
+    <AlertIcon /> 
+    <AlertTitle mr={2}>Transaction was not successful!</AlertTitle>
+    <AlertDescription>Your payment has not been processed.</AlertDescription>
     <AlertDescription><Link href={transactionUrl} _hover={{ textDecor: "none" }} target="_blank" ><Text  _hover={{  color: "black"  }}   >click to check Transaction details</Text></Link></AlertDescription>
 
     <CloseButton position="absolute" right="8px" top="8px" onClick={onClose} />
@@ -40,4 +40,4 @@ const Notification = ({transactionUrl}) => {
   ):null
 }
 
-export default Notification;
+export default FailedNotification;
